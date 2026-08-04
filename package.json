@@ -1,7 +1,7 @@
 {
   "name": "homeon",
   "version": "1.0.0",
-  "priavte": true,
+  "private": true,
   "scripts": {
     "upload": "pio run --project-dir firmware -t upload -e"
   },

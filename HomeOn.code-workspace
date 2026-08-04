@@ -1,0 +1,23 @@
+{
+  "folders": [
+    {
+      "name": "root",
+      "path": ".",
+    },
+    {
+      "name": "firmware",
+      "path": "firmware",
+    },
+    {
+      "name": "frontend",
+      "path": "services/frontend",
+    },
+  ],
+  "settings": {
+    "files.exclude": {
+      "firmware": true,
+      "services": true,
+      "node_modules": true,
+    },
+  },
+}
