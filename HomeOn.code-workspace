@@ -9,8 +9,8 @@
       "path": "firmware",
     },
     {
-      "name": "frontend",
-      "path": "services/frontend",
+      "name": "services",
+      "path": "services",
     },
   ],
   "settings": {
