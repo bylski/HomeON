@@ -1,0 +1,26 @@
+{
+  "title": "ComponentCommandEvent",
+  "type": "object",
+  "required": ["timestamp", "command"],
+  "additionalProperties": false,
+  "properties": {
+    "timestamp": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Timestamp when the command was issued"
+    },
+    "command": {
+      "type": "string",
+      "description": "High-level abstract intent (e.g., 'SET_TEMP', 'TURN_ON')"
+    },
+    "value": {
+      "oneOf": [
+        { "type": "number" },
+        { "type": "string" },
+        { "type": "boolean" },
+        { "type": "null" }
+      ],
+      "description": "Optional target payload or setpoint for the command"
+    }
+  }
+}

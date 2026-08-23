@@ -1,0 +1,100 @@
+{
+  "title": "DeviceDiscoveryEvent",
+  "description": "Payload sent by a device at boot to announce its components and capabilities.",
+  "type": "object",
+  "required": ["board_id", "components"],
+  "additionalProperties": false,
+  "properties": {
+    "board_id": {
+      "type": "string",
+      "description": "Unique board identifier (e.g., 'living_room_esp32')"
+    },
+    "ip_address": {
+      "type": "string"
+    },
+    "components": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ComponentConfig"
+      }
+    }
+  },
+  "definitions": {
+    "ComponentConfig": {
+      "title": "ComponentConfig",
+      "description": "Configuration and metadata for an attached component.",
+      "type": "object",
+      "required": ["id", "type"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Matches 'id' in ComponentTelemetryEvent (e.g., 'climate_sensor')"
+        },
+        "type": {
+          "type": "string",
+          "enum": ["SENSOR", "SWITCH", "DISPLAY", "MOTOR", "SERVO", "LIGHT"],
+          "description": "UI widget hint for web dashboard"
+        },
+        "metrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/MetricMetadata"
+          },
+          "description": "List of telemetry measurements this component can emit"
+        },
+        "commands": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/CommandMetadata"
+          },
+          "description": "List of abstract commands this component accepts"
+        }
+      }
+    },
+    "MetricMetadata": {
+      "title": "MetricMetadata",
+      "description": "Metadata definition for a component telemetry metric.",
+      "type": "object",
+      "required": ["metric_id", "unit"],
+      "additionalProperties": false,
+      "properties": {
+        "metric_id": {
+          "type": "string",
+          "description": "Specific metric key (e.g., 'temperature', 'humidity')"
+        },
+        "unit": {
+          "type": "string",
+          "description": "Unit of measurement required for automation logic (e.g., '°C', '%', 'RPM')"
+        },
+        "min_value": { "type": "number" },
+        "max_value": { "type": "number" }
+      }
+    },
+    "CommandMetadata": {
+      "title": "CommandMetadata",
+      "description": "Metadata definition for abstract actions accepted by a component.",
+      "type": "object",
+      "required": ["command", "command_topic"],
+      "additionalProperties": false,
+      "properties": {
+        "command": {
+          "type": "string",
+          "description": "Abstract high-level action (e.g., 'SET_TEMP', 'TURN_ON', 'MOVE_LEFT')"
+        },
+        "command_topic": {
+          "type": "string",
+          "description": "MQTT topic to publish this specific command payload to"
+        },
+        "allowed_values": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Optional discrete options (e.g., ['ON', 'OFF', 'AUTO'])"
+        },
+        "min_value": { "type": "number" },
+        "max_value": { "type": "number" },
+        "description": { "type": "string" }
+      }
+    }
+  }
+}

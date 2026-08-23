@@ -1,0 +1,38 @@
+{
+  "title": "ComponentTelemetryEvent",
+  "type": "object",
+  "required": ["timestamp", "id", "metric", "value"],
+  "additionalProperties": false,
+  "properties": {
+    "timestamp": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Timestamp of metric event"
+    },
+    "id": {
+      "type": "string",
+      "description": "Serves as component's identifier (e.g., 'climate_sensor')"
+    },
+    "metric": {
+      "type": "string",
+      "description": "Specific metric key (e.g., 'temperature')"
+    },
+    "value": {
+      "oneOf": [
+        { "type": "number" },
+        { "type": "boolean" },
+        { "type": "string" },
+        { "type": "null" }
+      ],
+      "description": "Pure unformatted value used directly in automation conditions (e.g., 23.5, true)"
+    },
+    "unit": {
+      "type": "string",
+      "description": "Optional standard unit symbol for backend logic (e.g., 'C', '%', 'RPM')"
+    },
+    "state": {
+      "type": "string",
+      "description": "Human-readable label strictly for UI display (e.g., '23.5 °C', 'HEATING')"
+    }
+  }
+}
