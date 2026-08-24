@@ -1,6 +1,6 @@
 import { SchemaPrimitiveType } from './jsonSchema'
 
-type StructKeyType = SchemaPrimitiveType | (string & {})
+type StructKeyType = SchemaPrimitiveType | 'jsonVariant' | (string & {})
 
 export type StructKey = {
   key: string
@@ -32,11 +32,12 @@ export class CppHeaderBuilder {
     this.write.header(`#include <${packageName}>`)
   }
 
-  private inputTypeToCppType(type: string) {
+  private inputTypeToCppType(type: StructKeyType) {
     if (type === 'integer') return 'int64_t'
     if (type === 'number') return 'double'
     if (type === 'boolean') return 'bool'
     if (type === 'string') return 'String'
+    if (type === 'jsonVariant') return 'JsonVariant'
     return type
   }
 

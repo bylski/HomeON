@@ -8,6 +8,7 @@
 struct ComponentCommandEvent {
     int64_t timestamp;
     String command;
+    JsonVariant value;
 };
 
 struct MetricMetadata {
@@ -43,6 +44,7 @@ struct ComponentTelemetryEvent {
     int64_t timestamp;
     String id;
     String metric;
+    JsonVariant value;
     String unit;
     String state;
 };

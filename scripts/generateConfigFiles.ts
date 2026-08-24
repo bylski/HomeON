@@ -7,23 +7,20 @@ import {
   extractRefSchemaName,
   getRefSchema,
   isArraySchemaProperty,
+  isFallbackSchemaProperty,
   isPrimitiveSchemaProperty,
   isRefSchemaProperty,
   SchemaProperties,
   SchemaProperty,
-  SchemaRefString,
 } from '../helpers/jsonSchema'
 import { execSync } from 'node:child_process'
 
-const scriptDir = import.meta.dirname
+const scriptDir = __dirname
 const configsDir = path.resolve(scriptDir, '../config')
 const schemasDir = path.join(configsDir, '/schemas')
 
-const cppOutputPath = path.resolve(
-  import.meta.dirname,
-  '../firmware/libs/topics.h',
-)
-const tsOutputPath = path.resolve(import.meta.dirname, '../generated/topics.ts')
+const cppOutputPath = path.resolve(__dirname, '../firmware/libs/events.h')
+const tsOutputPath = path.resolve(__dirname, '../generated/events.ts')
 
 const generateTsFile = async (fullTs: string) => {
   const configFile = await prettier.resolveConfigFile(tsOutputPath)
@@ -73,6 +70,7 @@ const buildCppFromSchemaProperties = (
   for (const [key, property] of propertiesList) {
     if (isPrimitiveSchemaProperty(property)) {
       structKeys.push({ key, type: property.type })
+      continue
     }
 
     if (isArraySchemaProperty(property)) {
@@ -92,6 +90,7 @@ const buildCppFromSchemaProperties = (
         )
         structKeys.push({ key, type: 'array', itemType: refType })
       }
+      continue
     }
 
     if (isRefSchemaProperty(property)) {
@@ -102,8 +101,16 @@ const buildCppFromSchemaProperties = (
         getRefSchema(rootSchema, refType),
         builder,
       )
-      structKeys.push({ key, type: refType as any })
+      structKeys.push({ key, type: refType })
+      continue
     }
+
+    if (isFallbackSchemaProperty(property)) {
+      structKeys.push({ key, type: 'jsonVariant' })
+      continue
+    }
+
+    throw new Error(`Property not supported: ${JSON.stringify(property)}`)
   }
 
   builder.addStruct(nodeSchema.title, structKeys)

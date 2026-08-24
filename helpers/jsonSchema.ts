@@ -7,6 +7,11 @@ export const SCHEMA_PRIMITVE_TYPES = [
 
 export type SchemaPrimitiveType = (typeof SCHEMA_PRIMITVE_TYPES)[number]
 
+export const SCHEMA_PROPERTIES_WITH_FALLBACK = ['oneOf'] as const
+
+export type SchemaPropertyWithFallback =
+  (typeof SCHEMA_PROPERTIES_WITH_FALLBACK)[number]
+
 type BaseSchemaProperty = { description?: string }
 type PrimitiveSchemaProperty = { type: SchemaPrimitiveType }
 
@@ -20,8 +25,15 @@ type ArraySchemaProperty = {
   items: SchemaProperty
 }
 
+type FallbackSchemaProperty = { [K in SchemaPropertyWithFallback]: any }
+
 export type SchemaProperty = BaseSchemaProperty &
-  (PrimitiveSchemaProperty | ArraySchemaProperty | RefSchemaProperty)
+  (
+    | PrimitiveSchemaProperty
+    | ArraySchemaProperty
+    | RefSchemaProperty
+    | FallbackSchemaProperty
+  )
 
 export type SchemaProperties<Key extends string = string> = Array<
   [Key, SchemaProperty]
@@ -41,6 +53,11 @@ export const isArraySchemaProperty = (
   property: SchemaProperty,
 ): property is ArraySchemaProperty =>
   'type' in property && 'items' in property && property.type === 'array'
+
+export const isFallbackSchemaProperty = (
+  property: SchemaProperty,
+): property is FallbackSchemaProperty =>
+  SCHEMA_PROPERTIES_WITH_FALLBACK.some((p) => Object.hasOwn(property, p))
 
 export const extractRefSchemaName = (ref: SchemaRefString): string =>
   ref.split('/').at(-1)!
