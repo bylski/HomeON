@@ -41,3 +41,9 @@ export const isArraySchemaProperty = (
   property: SchemaProperty,
 ): property is ArraySchemaProperty =>
   'type' in property && 'items' in property && property.type === 'array'
+
+export const extractRefSchemaName = (ref: SchemaRefString): string =>
+  ref.split('/').at(-1)!
+
+export const getRefSchema = (rootSchema: any, ref: string) =>
+  rootSchema.definitions[ref]
