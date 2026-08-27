@@ -1,49 +1,32 @@
-#include <ESP8266WiFi.h>
-#include <PubSubClient.h>
-
 #include "Arduino.h"
-#include "MqttEvents/MqttEvents.h"
+#include "Mqtt.h"
+#include "MqttEvents.h"
+#include "WifiService.h"
 #include "config.h"
 
-WiFiClient wifi_client;
-PubSubClient mqtt_client(wifi_client);
-char* BOARD_ID = "test_sensors";
-const uint16_t MQTT_RETRY_INTERVAL_SECONDS = 5;
+HomeOn::WifiService wifi_service;
+HomeOn::MqttService mqtt_client(wifi_service.getClient(),
+                                {
+                                    .host = Config::MQTT_HOST,
+                                    .client_id = "test_sensors",
+                                    .username = Config::MQTT_USERNAME,
+                                    .password = Config::MQTT_PASSWORD,
+                                    .port = Config::MQTT_PORT,
+                                });
 
-void setup_wifi() {
-    WiFi.begin(Config::WIFI_SSID, Config::WIFI_PASSWORD);
-    Serial.print("\nTrying to connect to WiFi...");
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print('.');
-    }
-    Serial.println();
-    Serial.print("Successfully connected to: ");
-    Serial.println(Config::WIFI_SSID);
-}
-
-void setup_mqtt() {
-    mqtt_client.setServer(Config::MQTT_HOST, Config::MQTT_PORT);
-    mqtt_client.connect(BOARD_ID, Config::MQTT_USERNAME, Config::MQTT_PASSWORD);
-
-    Serial.print("\nTrying to connect to MQTT server...");
-    while (!mqtt_client.connected()) {
-        Serial.print("Connection failed, retrying in ");
-        Serial.print(MQTT_RETRY_INTERVAL_SECONDS);
-        Serial.println(" seconds");
-
-        delay(5000);
-        Serial.println("Retrying to establish MQTT connection...");
-        mqtt_client.connect(BOARD_ID);
-    }
-    Serial.println();
-    Serial.print("Successfully connected to MQTT broker");
-}
+const uint8_t TRIG_PIN = D1;
+const uint8_t ECHO_PIN = D2;
+const uint8_t LED_PIN = D3;
 
 void setup() {
     Serial.begin(115200);
-    // setup_wifi();
-    // setup_mqtt();
+    pinMode(ECHO_PIN, INPUT);
+    pinMode(TRIG_PIN, OUTPUT);
+    pinMode(LED_PIN, OUTPUT);
+    digitalWrite(LED_PIN, LOW);
+
+    wifi_service.begin(Config::WIFI_SSID, Config::WIFI_PASSWORD);
+    mqtt_client.connect();
 
     MetricMetadata metric_metadata;
     metric_metadata.max_value = 255;
@@ -57,7 +40,29 @@ void setup() {
 
     Serial.println(res);
 
-    mqtt_client.publish("home/sensor/pin_state", "HELLO WORLD");
+    mqtt_client.client().publish("home/sensor/pin_state", "HELLO WORLD");
 }
 
-void loop() {}
+void loop() {
+    digitalWrite(TRIG_PIN, LOW);
+    delayMicroseconds(2);
+
+    digitalWrite(TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG_PIN, LOW);
+
+    long duration = pulseIn(ECHO_PIN, HIGH, 30000);
+
+    int distance = duration / 58;
+    Serial.print("Distance: ");
+    Serial.print(distance);
+    Serial.println(" cm");
+
+    if (distance > 100) {
+        digitalWrite(LED_PIN, HIGH);
+    } else {
+        digitalWrite(LED_PIN, LOW);
+    }
+
+    delay(200);
+}

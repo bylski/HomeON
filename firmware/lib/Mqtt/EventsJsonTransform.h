@@ -1,6 +1,6 @@
 #pragma once
 
-#include <MqttEvents/Events.h>
+#include <Events.h>
 
 /*
  Arduino Json library automatically uses converters when
