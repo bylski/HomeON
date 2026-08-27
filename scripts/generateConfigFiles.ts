@@ -19,7 +19,10 @@ const scriptDir = __dirname
 const configsDir = path.resolve(scriptDir, '../config')
 const schemasDir = path.join(configsDir, '/schemas')
 
-const cppOutputPath = path.resolve(__dirname, '../firmware/libs/events.h')
+const cppOutputPath = path.resolve(
+  __dirname,
+  '../firmware/libs/MqttEvents/Events.h',
+)
 const tsOutputPath = path.resolve(__dirname, '../generated/events.ts')
 
 const generateTsFile = async (fullTs: string) => {

@@ -18,7 +18,7 @@ export class CppHeaderBuilder {
   private structBlocks: string[] = []
 
   constructor() {
-    this.write.header('#pragma once;\n')
+    this.write.header('#pragma once\n')
     this.includes.forEach((lib) => this.writeInclude(lib))
     this.write.header('\n')
   }
