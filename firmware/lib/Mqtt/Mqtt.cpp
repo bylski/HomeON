@@ -9,6 +9,7 @@ MqttService::MqttService(Client& client, const MqttConfig& config)
     if (_config.host != nullptr) {
         _client.setServer(_config.host, _config.port);
     }
+    _client.setBufferSize(2048);
 }
 
 MqttService::~MqttService() {}
@@ -27,7 +28,17 @@ void MqttService::connect() {
         connectClient();
     }
     Serial.println();
-    Serial.print("Successfully connected to MQTT broker");
+    Serial.println("Successfully connected to MQTT broker");
+}
+
+bool MqttService::publish(const char* topic, const char* data) {
+    bool ok = _client.publish(topic, data);
+    if (ok) {
+        Serial.println("Publishing " + String(topic) + " event");
+    } else {
+        Serial.println("Error while publishing " + String(topic) + " event");
+    }
+    return ok;
 }
 
 PubSubClient& MqttService::client() { return _client; }

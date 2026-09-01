@@ -16,6 +16,8 @@ class WifiService {
 
     Client& getClient();
 
+    IPAddress getLocalIp();
+
    private:
     WiFiClient* _rawClient;
 };

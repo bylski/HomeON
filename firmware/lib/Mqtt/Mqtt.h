@@ -23,6 +23,8 @@ class MqttService {
 
     void connect();
 
+    bool publish(const char* topic, const char* data);
+
     PubSubClient& client();
 
    private:

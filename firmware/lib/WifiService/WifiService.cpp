@@ -21,6 +21,8 @@ bool WifiService::begin(const char* ssid, const char* pass) {
     return true;
 }
 
+IPAddress WifiService::getLocalIp() { return WiFi.localIP(); }
+
 Client& WifiService::getClient() { return *_rawClient; }
 
 }  // namespace HomeOn

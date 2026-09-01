@@ -31,6 +31,7 @@ export const setup = () => {
 export const onEvent = (topic: Topic, callback: mqtt.OnMessageCallback) => {
   if (!subscriptions.has(topic)) {
     client.subscribe(topic)
+    subscriptions.add(topic)
   }
   client.on('message', callback)
   client.on('error', (error) => {
@@ -40,4 +41,17 @@ export const onEvent = (topic: Topic, callback: mqtt.OnMessageCallback) => {
       )
     }
   })
+}
+
+export const publish = (topic: Topic, data: string) => {
+  if (!client || !client.connected) {
+    logger.error(`Cannot publish to ${topic}: Client not connected`)
+    return
+  }
+
+  try {
+    client.publish(topic, data)
+  } catch (e) {
+    console.log('ERROR', e)
+  }
 }
