@@ -4,6 +4,7 @@
   "type": "object",
   "required": ["board_id", "components"],
   "additionalProperties": false,
+  "x-topic-prefix": "home-on/discovery/",
   "properties": {
     "board_id": {
       "type": "string",

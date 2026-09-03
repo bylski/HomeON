@@ -1,3 +1,13 @@
+export type EventSchema = {
+  title: string
+  description?: string
+  type: SchemaPrimitiveType | 'object'
+  required: string[]
+  additionalProperties: boolean
+  properties: SchemaProperties
+  ['x-topic-prefix']?: string
+}
+
 export const SCHEMA_PRIMITVE_TYPES = [
   'integer',
   'number',
@@ -35,8 +45,9 @@ export type SchemaProperty = BaseSchemaProperty &
     | FallbackSchemaProperty
   )
 
-export type SchemaProperties<Key extends string = string> = Array<
-  [Key, SchemaProperty]
+export type SchemaProperties<Key extends string = string> = Record<
+  Key,
+  SchemaProperty
 >
 
 export const isPrimitiveSchemaProperty = (

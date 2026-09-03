@@ -107,3 +107,9 @@ export interface ComponentTelemetryEvent {
    */
   state?: string
 }
+
+export type TopicPrefixesWithTypes = {
+  'home-on/commands/': ComponentCommandEvent
+  'home-on/discovery/': DeviceDiscoveryEvent
+  'home-on/telemetry/': ComponentTelemetryEvent
+}

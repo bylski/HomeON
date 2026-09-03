@@ -4,6 +4,7 @@ type StructKeyType = SchemaPrimitiveType | 'jsonVariant' | (string & {})
 
 export type StructKey = {
   key: string
+  value?: string
 } & (
   | {
       type: StructKeyType
@@ -16,6 +17,7 @@ export class CppHeaderBuilder {
 
   private headerBlocks: string[] = []
   private structBlocks: string[] = []
+  private templateBlocks: string[] = []
 
   constructor() {
     this.write.header('#pragma once\n')
@@ -26,6 +28,7 @@ export class CppHeaderBuilder {
   private write = {
     header: (str: string) => this.headerBlocks.push(str),
     struct: (str: string) => this.structBlocks.push(str),
+    template: (str: string) => this.templateBlocks.push(str),
   }
 
   private writeInclude(packageName: string) {
@@ -41,17 +44,35 @@ export class CppHeaderBuilder {
     return type
   }
 
-  private addStructKey({ key, type }: StructKey) {
-    this.write.struct(`${this.inputTypeToCppType(type)} ${key};`)
+  private prepareStructKeyValue(value: StructKey['value']): string {
+    if (!value) {
+      return ''
+    }
+    let preparedValue = ''
+
+    if (typeof value === 'string') {
+      preparedValue = `"${value}"` // if value is a string we want to generate inside of ""
+    }
+
+    return `= ${preparedValue}`
+  }
+
+  private addStructKey(
+    { key, type, value }: StructKey,
+    writer: keyof typeof this.write = 'struct',
+  ) {
+    this.write[writer](
+      `${this.inputTypeToCppType(type)} ${key} ${this.prepareStructKeyValue(value)};`,
+    )
     return this
   }
 
-  private addStructArrayKey({
-    key,
-    itemType,
-  }: Extract<StructKey, { type: 'array' }>) {
-    this.write.struct(
-      `std::vector<${this.inputTypeToCppType(itemType)}> ${key};`,
+  private addStructArrayKey(
+    { key, itemType, value }: Extract<StructKey, { type: 'array' }>,
+    writer: keyof typeof this.write = 'struct',
+  ) {
+    this.write[writer](
+      `std::vector<${this.inputTypeToCppType(itemType)}> ${key} ${this.prepareStructKeyValue(value)};`,
     )
   }
 
@@ -65,7 +86,32 @@ export class CppHeaderBuilder {
     this.write.struct('};\n')
   }
 
+  addBaseTemplateStruct(structName: string) {
+    this.write.template('template<typename T>')
+    this.write.template(`struct ${structName};`)
+  }
+
+  addTemplateStruct(
+    structName: string,
+    templateType: string,
+    fields: StructKey[],
+  ) {
+    this.write.template('template<>')
+    this.write.template(`struct ${structName}<${templateType}> {`)
+    for (const field of fields) {
+      'itemType' in field
+        ? this.addStructArrayKey(field, 'template')
+        : this.addStructKey(field, 'template')
+    }
+    this.write.template('};\n')
+  }
+
   resolve() {
-    return `${this.headerBlocks.join('\n')}` + `${this.structBlocks.join('\n')}`
+    return (
+      `${this.headerBlocks.join('\n')}` +
+      `${this.structBlocks.join('\n')}` +
+      '\n' +
+      `${this.templateBlocks.join('\n')}`
+    )
   }
 }

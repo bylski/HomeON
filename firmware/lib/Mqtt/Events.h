@@ -48,3 +48,20 @@ struct ComponentTelemetryEvent {
     String unit;
     String state;
 };
+
+template <typename T>
+struct TopicTraits;
+template <>
+struct TopicTraits<ComponentCommandEvent> {
+    static constexpr const std::string_view prefix = "home-on/commands/";
+};
+
+template <>
+struct TopicTraits<DeviceDiscoveryEvent> {
+    static constexpr const std::string_view prefix = "home-on/discovery/";
+};
+
+template <>
+struct TopicTraits<ComponentTelemetryEvent> {
+    static constexpr const std::string_view prefix = "home-on/telemetry/";
+};

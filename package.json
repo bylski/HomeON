@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "scripts": {
-    "generate-configs": "npx tsx ./scripts/generateConfigFiles.ts",
+    "generate-configs": "npx tsx ./scripts/generateConfigFiles/index.ts",
     "upload": "pio run --project-dir firmware -t upload -e"
   },
   "devDependencies": {
