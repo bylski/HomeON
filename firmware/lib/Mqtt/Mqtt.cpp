@@ -31,16 +31,6 @@ void MqttService::connect() {
     Serial.println("Successfully connected to MQTT broker");
 }
 
-bool MqttService::publish(const char* topic, const char* data) {
-    bool ok = _client.publish(topic, data);
-    if (ok) {
-        Serial.println("Publishing " + String(topic) + " event");
-    } else {
-        Serial.println("Error while publishing " + String(topic) + " event");
-    }
-    return ok;
-}
-
 PubSubClient& MqttService::client() { return _client; }
 
 }  // namespace HomeOn

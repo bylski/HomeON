@@ -35,7 +35,7 @@ struct ComponentConfig {
 };
 
 struct DeviceDiscoveryEvent {
-    String board_id;
+    String device_id;
     String ip_address;
     std::vector<ComponentConfig> components;
 };

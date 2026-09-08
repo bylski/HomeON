@@ -2,11 +2,11 @@
   "title": "DeviceDiscoveryEvent",
   "description": "Payload sent by a device at boot to announce its components and capabilities.",
   "type": "object",
-  "required": ["board_id", "components"],
+  "required": ["device_id", "components"],
   "additionalProperties": false,
   "x-topic-prefix": "home-on/discovery/",
   "properties": {
-    "board_id": {
+    "device_id": {
       "type": "string",
       "description": "Unique board identifier (e.g., 'living_room_esp32')"
     },

@@ -3,15 +3,14 @@
 #include "MqttEvents.h"
 #include "WifiService.h"
 #include "config.h"
-
-const char* BOARD_ID = "test_sensors";
+#include "discovery.h"
 
 HomeOn::WifiService wifi_service;
 
 HomeOn::MqttService mqtt_client(wifi_service.getClient(),
                                 {
                                     .host = Config::MQTT_HOST,
-                                    .client_id = BOARD_ID,
+                                    .client_id = Config::DEVICE_ID,
                                     .username = Config::MQTT_USERNAME,
                                     .password = Config::MQTT_PASSWORD,
                                     .port = Config::MQTT_PORT,
@@ -48,72 +47,15 @@ void setup() {
     wifi_service.begin(Config::WIFI_SSID, Config::WIFI_PASSWORD);
     mqtt_client.connect();
 
-    MetricMetadata ultrasonic_sensor_metric = {
-        .metric_id = "ultrasonic_distance",
-        .unit = "cm",
-        .min_value = 0,
-    };
+    mqtt_client.publish(DISCOVERY_EVENT, Config::DEVICE_ID, {.retain = true});
 
-    MetricMetadata button_metric = {
-        .metric_id = "button_is_pressed",
-        .min_value = 0,
-        .max_value = 1,
-    };
-
-    MetricMetadata led_metric = {
-        .metric_id = "led_state",
-        .min_value = 0,
-        .max_value = 1,
-    };
-
-    CommandMetadata led_command = {
-        .command = "switch_led",
-        .command_topic = "/red_led/switch",
-        .allowed_values = {"ON", "OFF"},
-        .description = "Switches LED ON or OFF",
-    };
-
-    ComponentConfig ultrasonic_sensor = {
-        .id = "ultrasonic_sensor",
-        .type = "SENSOR",
-        .metrics = {ultrasonic_sensor_metric},
-    };
-
-    ComponentConfig monostable_switch = {
-        .id = "monostable_switch",
-        .type = "SWITCH",
-        .metrics = {button_metric},
-    };
-
-    ComponentConfig led_diode = {
-        .id = "red_led_diode",
-        .type = "LIGHT",
-        .metrics = {led_metric},
-        .commands = {led_command},
-    };
-
-    DeviceDiscoveryEvent discovery_event = {
-        .board_id = BOARD_ID,
-        .ip_address = wifi_service.getLocalIp().toString(),
-        .components = {ultrasonic_sensor, monostable_switch, led_diode},
-    };
-
-    JsonDocument json_res;
-    String res;
-    json_res.set(discovery_event);
-    serializeJson(json_res, res);
-
-    String discovery_topic = (String("home_on/discovery/") + BOARD_ID);
-    mqtt_client.publish(discovery_topic.c_str(), res.c_str());
-
-    String command_topic =
-        (String("home_on/commands/") + BOARD_ID + led_command.command_topic);
-    mqtt_client.client().subscribe(command_topic.c_str());
-    mqtt_client.client().setCallback(mqtt_callback);
+    // mqtt_client.client().subscribe(command_topic.c_str());
+    // mqtt_client.client().setCallback(mqtt_callback);
 }
 
 void loop() {
-    mqtt_client.client().loop();
+    // mqtt_client.client().loop();
+
     // digitalWrite(TRIG_PIN, LOW);
     // delayMicroseconds(2);
 

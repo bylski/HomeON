@@ -1,10 +1,11 @@
 import * as mqtt from 'mqtt'
 import { buildLogger } from '../logger/index.js'
-
-type Topic = string
+import type { TopicPayload, TopicPrefix } from '../../types/events.js'
+import type { TopicPrefixesWithTypes } from '@home-on/generated'
+import { validateBaseTopicEvent } from '../validator/index.js'
 
 let client: mqtt.MqttClient
-const subscriptions: Set<Topic> = new Set()
+const subscriptions: Set<string> = new Set()
 
 const logger = buildLogger('[MQTT]')
 
@@ -28,12 +29,25 @@ export const setup = () => {
   })
 }
 
-export const onEvent = (topic: Topic, callback: mqtt.OnMessageCallback) => {
+export const onEvent = <TPrefix extends TopicPrefix>(
+  topicPrefix: TPrefix,
+  topicSuffix: string,
+  callback: (topic: string, payload: TopicPayload<TPrefix>) => void,
+) => {
+  const topic = topicPrefix + topicSuffix
+
   if (!subscriptions.has(topic)) {
     client.subscribe(topic)
     subscriptions.add(topic)
   }
-  client.on('message', callback)
+  const mqttCallback: mqtt.OnMessageCallback = (topic, buffer) => {
+    let eventPayload = JSON.parse(buffer.toString())
+    eventPayload.x = 'unknown field' // test - should fail
+    const validPayload = validateBaseTopicEvent(topicPrefix, eventPayload)
+    callback(topic, validPayload)
+  }
+
+  client.on('message', mqttCallback)
   client.on('error', (error) => {
     if (error instanceof mqtt.ErrorWithReasonCode) {
       logger.info(
@@ -43,7 +57,7 @@ export const onEvent = (topic: Topic, callback: mqtt.OnMessageCallback) => {
   })
 }
 
-export const publish = (topic: Topic, data: string) => {
+export const publish = (topic: string, data: string) => {
   if (!client || !client.connected) {
     logger.error(`Cannot publish to ${topic}: Client not connected`)
     return

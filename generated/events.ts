@@ -20,7 +20,7 @@ export interface DeviceDiscoveryEvent {
   /**
    * Unique board identifier (e.g., 'living_room_esp32')
    */
-  board_id: string
+  device_id: string
   ip_address?: string
   components: ComponentConfig[]
 }

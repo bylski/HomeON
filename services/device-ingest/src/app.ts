@@ -5,7 +5,7 @@ import path from 'path'
 import * as mqtt from './libs/mqtt/index.js'
 import { DeviceDiscoveryEvent } from '@home-on/generated'
 
-let discoveryEvent: DeviceDiscoveryEvent = { board_id: 'test_sensors' } as any
+let discoveryEvent: DeviceDiscoveryEvent = { device_id: 'test_sensors' } as any
 
 dotenv.config({
   path: path.resolve(import.meta.dirname, '../../../.env.shared'),
@@ -15,14 +15,13 @@ const app = express()
 app.use(cors())
 mqtt.setup()
 
-mqtt.onEvent('home_on/discovery/#', (d, a) => {
-  discoveryEvent = JSON.parse(a.toString()) as DeviceDiscoveryEvent
-  console.log(`MESSAGE IS ${JSON.stringify(discoveryEvent)}`)
+mqtt.onEvent('home-on/discovery/', '#', (d, event) => {
+  console.log(`MESSAGE IS ${JSON.stringify(event)}`)
 })
 
 app.get('/on', (req, res) => {
   mqtt.publish(
-    `home_on/commands/${discoveryEvent.board_id}/red_led/switch`,
+    `home-on/commands/${discoveryEvent.device_id}/red_led/switch`,
     'ON',
   )
   res.send('ON')
@@ -30,7 +29,7 @@ app.get('/on', (req, res) => {
 
 app.get('/off', (req, res) => {
   mqtt.publish(
-    `home_on/commands/${discoveryEvent.board_id}/red_led/switch`,
+    `home-on/commands/${discoveryEvent.device_id}/red_led/switch`,
     'OFF',
   )
   res.send('OFF')

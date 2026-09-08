@@ -33,4 +33,5 @@ constexpr const uint16_t MQTT_PORT = ENV_MQTT_PORT;
 constexpr const char* MQTT_USERNAME = ENV_MQTT_USERNAME;
 constexpr const char* MQTT_PASSWORD = ENV_MQTT_PASSWORD;
 constexpr const char* MQTT_HOST = ENV_MQTT_HOST;
+constexpr const char* DEVICE_ID = "test_sensors";
 }  // namespace Config

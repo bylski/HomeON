@@ -84,7 +84,7 @@ struct Converter<ComponentTelemetryEvent> {
 template <>
 struct Converter<DeviceDiscoveryEvent> {
     static bool toJson(const DeviceDiscoveryEvent& src, JsonVariant dst) {
-        dst["board_id"] = src.board_id;
+        dst["device_id"] = src.device_id;
         dst["ip_address"] = src.ip_address;
         dst["components"] = src.components;
         return true;
