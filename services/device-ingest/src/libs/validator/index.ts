@@ -1,5 +1,5 @@
 import { discoveryEventSchema } from '../../schemas/events'
-import type { TopicPayload, TopicPrefix } from '../../types/events'
+import type { TopicPayload, TopicPrefix } from '../../contract/events'
 import { z, type ZodType } from 'zod'
 discoveryEventSchema
 

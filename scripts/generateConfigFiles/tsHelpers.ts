@@ -7,8 +7,11 @@ export const generateTsFile = async (
   topicsWithType: Map<string, string>,
   outPath: string,
 ) => {
+  const topicsWithTypeTuple = Array.from(topicsWithType)
+  fullTs += `export const TOPIC_PREFIXES = [${topicsWithTypeTuple.map(([key]) => `'${key}'`).join(', ')}];`
+
   fullTs += `export type TopicPrefixesWithTypes = {
-    ${Array.from(topicsWithType).map(([key, val]) => `'${key}': ${val}`)}
+    ${topicsWithTypeTuple.map(([key, val]) => `'${key}': ${val}`)}
   }`
 
   const configFile = await prettier.resolveConfigFile(outPath)

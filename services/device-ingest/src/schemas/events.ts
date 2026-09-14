@@ -29,8 +29,10 @@ const ComponentConfigSchema: z.ZodType<ComponentConfig> = z.object({
   commands: z.array(CommandSchema).optional(),
 })
 
-export const discoveryEventSchema: z.ZodType<DeviceDiscoveryEvent> = z.object({
-  device_id: z.string(),
-  ip_address: z.string().optional(),
-  components: z.array(ComponentConfigSchema),
-})
+export const discoveryEventSchema: z.ZodType<DeviceDiscoveryEvent> = z
+  .object({
+    device_id: z.string(),
+    ip_address: z.string().optional(),
+    components: z.array(ComponentConfigSchema),
+  })
+  .strict()
