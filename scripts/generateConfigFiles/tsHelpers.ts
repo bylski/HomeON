@@ -15,9 +15,7 @@ export const generateTsFile = async (
   }`
 
   const configFile = await prettier.resolveConfigFile(outPath)
-  const prettierConfig = configFile
-    ? await prettier.resolveConfig(configFile)
-    : undefined
+  const prettierConfig = configFile ? await prettier.resolveConfig(configFile) : undefined
 
   const formatted = await prettier.format(fullTs, {
     ...prettierConfig,
@@ -27,10 +25,7 @@ export const generateTsFile = async (
   fs.writeFileSync(outPath, formatted)
 }
 
-export const buildTsFile = async (
-  currentTsCode: string,
-  schemaPath: string,
-) => {
+export const buildTsFile = async (currentTsCode: string, schemaPath: string) => {
   const rawTs = await schema2Ts.compileFromFile(schemaPath, {
     bannerComment: '',
     format: false,

@@ -12,11 +12,8 @@ const TOPIC_PREFIX_SCHEMA_MAP = {
 export const validateBaseTopicEvent = <TPrefix extends TopicPrefix>(
   topicPrefix: TPrefix,
   payload: unknown,
-): TopicPayload<TPrefix> => {
-  return TOPIC_PREFIX_SCHEMA_MAP[topicPrefix].parse(
-    payload,
-  ) as TopicPayload<TPrefix>
-}
+): TopicPayload<TPrefix> =>
+  TOPIC_PREFIX_SCHEMA_MAP[topicPrefix].parse(payload) as TopicPayload<TPrefix>
 
 const x = <TPrefix extends TopicPrefix>(e: TPrefix) => {
   const val = validateBaseTopicEvent('home-on/commands/', {} as any)

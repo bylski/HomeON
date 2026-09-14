@@ -79,9 +79,7 @@ export class CppHeaderBuilder {
   addStruct(name: string, fields: StructKey[]) {
     this.write.struct(`struct ${name} {`)
     for (const field of fields) {
-      'itemType' in field
-        ? this.addStructArrayKey(field)
-        : this.addStructKey(field)
+      'itemType' in field ? this.addStructArrayKey(field) : this.addStructKey(field)
     }
     this.write.struct('};\n')
   }
@@ -91,11 +89,7 @@ export class CppHeaderBuilder {
     this.write.template(`struct ${structName};`)
   }
 
-  addTemplateStruct(
-    structName: string,
-    templateType: string,
-    fields: StructKey[],
-  ) {
+  addTemplateStruct(structName: string, templateType: string, fields: StructKey[]) {
     this.write.template('template<>')
     this.write.template(`struct ${structName}<${templateType}> {`)
     for (const field of fields) {

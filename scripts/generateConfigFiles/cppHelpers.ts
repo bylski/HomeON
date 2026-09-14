@@ -32,13 +32,8 @@ export const generateCppHeaderFile = async (
   execSync(`clang-format -i ${outPath}`, { stdio: 'inherit' })
 }
 
-export const buildCppHeaderFile = async (
-  builder: CppHeaderBuilder,
-  schemaPath: string,
-) => {
-  const schemaObject = JSON.parse(
-    fs.readFileSync(schemaPath, { encoding: 'utf-8' }),
-  )
+export const buildCppHeaderFile = async (builder: CppHeaderBuilder, schemaPath: string) => {
+  const schemaObject = JSON.parse(fs.readFileSync(schemaPath, { encoding: 'utf-8' }))
   buildCppFromSchemaProperties(schemaObject, schemaObject, builder)
 }
 
@@ -81,11 +76,7 @@ const buildCppFromSchemaProperties = (
       if (isRefSchemaProperty(itemsProperty)) {
         const refType = extractRefSchemaName(itemsProperty.$ref)
 
-        buildCppFromSchemaProperties(
-          rootSchema,
-          getRefSchema(rootSchema, refType),
-          builder,
-        )
+        buildCppFromSchemaProperties(rootSchema, getRefSchema(rootSchema, refType), builder)
         structKeys.push({ key, type: 'array', itemType: refType })
       }
       continue
@@ -94,11 +85,7 @@ const buildCppFromSchemaProperties = (
     if (isRefSchemaProperty(property)) {
       const refType = extractRefSchemaName(property.$ref)
 
-      buildCppFromSchemaProperties(
-        rootSchema,
-        getRefSchema(rootSchema, refType),
-        builder,
-      )
+      buildCppFromSchemaProperties(rootSchema, getRefSchema(rootSchema, refType), builder)
       structKeys.push({ key, type: refType })
       continue
     }

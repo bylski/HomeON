@@ -5,10 +5,7 @@ import { TOPIC_PREFIXES, type TopicPrefixesWithTypes } from '@home-on/generated'
 import { validateBaseTopicEvent } from '../validator/index.js'
 import { getTopicWildcardVariations } from './helpers.js'
 
-type OnEventCallback = (
-  topic: string,
-  payload: TopicPayload<TopicPrefix>,
-) => void
+type OnEventCallback = (topic: string, payload: TopicPayload<TopicPrefix>) => void
 
 let client: mqtt.MqttClient
 const subscriptionsWithCallbacks: Map<string, OnEventCallback[]> = new Map()
@@ -37,28 +34,19 @@ export const setup = () => {
 
   client.on('message', (topic, buffer) => {
     // we want to only allow handling of topic with supported prefixes\
-    const supportedPrefix = TOPIC_PREFIXES.find((prefix) =>
-      topic.startsWith(prefix),
-    )
+    const supportedPrefix = TOPIC_PREFIXES.find((prefix) => topic.startsWith(prefix))
     if (!supportedPrefix) {
-      logger.error(
-        `Received message under unsupported topic: ${topic} - message not handled.`,
-      )
+      logger.error(`Received message under unsupported topic: ${topic} - message not handled.`)
       return
     }
-    const topicPrefix = topic.substring(
-      0,
-      supportedPrefix.length,
-    ) as TopicPrefix
+    const topicPrefix = topic.substring(0, supportedPrefix.length) as TopicPrefix
 
     // message parsing with validation
     let eventPayload
     try {
       eventPayload = JSON.parse(buffer.toString())
     } catch (e) {
-      logger.error(
-        `Error during parsing message buffer for topic ${topic}, error: ${e}`,
-      )
+      logger.error(`Error during parsing message buffer for topic ${topic}, error: ${e}`)
       return
     }
     const validPayload = validateBaseTopicEvent(topicPrefix, eventPayload)
@@ -74,8 +62,7 @@ export const setup = () => {
         continue
       }
       // if topic structure has registrated callbacks - call them
-      for (const callback of subscriptionsWithCallbacks.get(topicToCheck) ??
-        []) {
+      for (const callback of subscriptionsWithCallbacks.get(topicToCheck) ?? []) {
         callback(topic, validPayload)
       }
     }
