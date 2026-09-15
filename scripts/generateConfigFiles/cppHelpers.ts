@@ -91,7 +91,7 @@ const buildCppFromSchemaProperties = (
     }
 
     if (isFallbackSchemaProperty(property)) {
-      structKeys.push({ key, type: 'jsonVariant' })
+      structKeys.push({ key, type: 'variant' })
       continue
     }
 

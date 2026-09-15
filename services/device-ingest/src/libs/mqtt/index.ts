@@ -5,10 +5,13 @@ import { TOPIC_PREFIXES, type TopicPrefixesWithTypes } from '@home-on/generated'
 import { validateBaseTopicEvent } from '../validator/index.js'
 import { getTopicWildcardVariations } from './helpers.js'
 
-type OnEventCallback = (topic: string, payload: TopicPayload<TopicPrefix>) => void
+type OnEventCallback<TPrefix extends TopicPrefix> = (
+  topic: string,
+  payload: TopicPayload<TPrefix>,
+) => void
 
 let client: mqtt.MqttClient
-const subscriptionsWithCallbacks: Map<string, OnEventCallback[]> = new Map()
+const subscriptionsWithCallbacks: Map<string, OnEventCallback<TopicPrefix>[]> = new Map()
 
 const logger = buildLogger('[MQTT]')
 
@@ -78,7 +81,7 @@ export const setup = () => {
 export const onEvent = <TPrefix extends TopicPrefix>(
   topicPrefix: TPrefix,
   topicSuffix: string,
-  callback: OnEventCallback,
+  callback: OnEventCallback<TPrefix>,
 ) => {
   if (topicPrefix.includes('+') || topicSuffix.includes('+')) {
     logger.error(`'+' Wildcard is not supported for topics`)

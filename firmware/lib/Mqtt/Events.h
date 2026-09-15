@@ -3,12 +3,13 @@
 #include <Arduino.h>
 #include <ArduinoJson.h>
 
+#include <variant>
 #include <vector>
 
 struct ComponentCommandEvent {
     int64_t timestamp;
     String command;
-    JsonVariant value;
+    std::variant<int, double, bool, String> value;
 };
 
 struct MetricMetadata {
@@ -44,7 +45,7 @@ struct ComponentTelemetryEvent {
     int64_t timestamp;
     String id;
     String metric;
-    JsonVariant value;
+    std::variant<int, double, bool, String> value;
     String unit;
     String state;
 };

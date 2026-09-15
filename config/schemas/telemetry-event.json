@@ -1,7 +1,7 @@
 {
   "title": "ComponentTelemetryEvent",
   "type": "object",
-  "required": ["timestamp", "id", "metric", "value"],
+  "required": ["id", "metric", "value"],
   "additionalProperties": false,
   "x-topic-prefix": "home-on/telemetry/",
   "properties": {

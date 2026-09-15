@@ -3,6 +3,7 @@ import {
   ComponentConfig,
   DeviceDiscoveryEvent,
   MetricMetadata,
+  type ComponentTelemetryEvent,
 } from '@home-on/generated'
 import { z } from 'zod'
 
@@ -34,5 +35,17 @@ export const discoveryEventSchema: z.ZodType<DeviceDiscoveryEvent> = z
     device_id: z.string(),
     ip_address: z.string().optional(),
     components: z.array(ComponentConfigSchema),
+  })
+  .strict()
+
+
+  export const telemetryEventSchema: z.ZodType<ComponentTelemetryEvent> = z
+  .object({
+    timestamp: z.number().optional(),
+    id: z.string(),
+    metric: z.string(),
+    value: z.any(),
+    unit: z.string().optional(),
+    state: z.string().optional()
   })
   .strict()

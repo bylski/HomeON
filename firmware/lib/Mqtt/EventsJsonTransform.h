@@ -63,7 +63,7 @@ struct Converter<ComponentCommandEvent> {
     static bool toJson(const ComponentCommandEvent& src, JsonVariant dst) {
         dst["timestamp"] = src.timestamp;
         dst["command"] = src.command;
-        dst["value"] = src.value;
+        std::visit([&dst](auto&& arg) { dst["value"] = arg; }, src.value);
         return true;
     }
 };
@@ -74,7 +74,7 @@ struct Converter<ComponentTelemetryEvent> {
         dst["timestamp"] = src.timestamp;
         dst["id"] = src.id;
         dst["metric"] = src.metric;
-        dst["value"] = src.value;
+        std::visit([&dst](auto&& arg) { dst["value"] = arg; }, src.value);
         dst["unit"] = src.unit;
         dst["state"] = src.state;
         return true;

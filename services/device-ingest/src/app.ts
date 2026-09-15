@@ -1,15 +1,11 @@
+import './envConfig.js' // keep at the top to make sure envs are available inside other imports
 import express from 'express'
 import cors from 'cors'
-import dotenv from 'dotenv'
-import path from 'path'
 import * as mqtt from './libs/mqtt/index.js'
-import { DeviceDiscoveryEvent } from '@home-on/generated'
+import { DeviceDiscoveryEvent, type ComponentTelemetryEvent } from '@home-on/generated'
+import './libs/drizzle'
 
-let discoveryEvent: DeviceDiscoveryEvent = { device_id: 'test_sensors' } as any
-
-dotenv.config({
-  path: path.resolve(import.meta.dirname, '../../../.env.shared'),
-})
+let telemetryEvents: ComponentTelemetryEvent[]
 
 const app = express()
 app.use(cors())
@@ -17,6 +13,10 @@ mqtt.setup()
 
 mqtt.onEvent('home-on/discovery/', '#', (d, event) => {
   console.log(`MESSAGE IS ${JSON.stringify(event)}`)
+})
+
+mqtt.onEvent('home-on/telemetry/', 'test_sensors/ultrasonic_sensor', (d, event) => {
+  console.log(`TELEMETRY MESSAGE IS ${JSON.stringify(event)}`)
 })
 
 app.listen(3000, () => {

@@ -85,7 +85,7 @@ export interface ComponentTelemetryEvent {
   /**
    * Timestamp of metric event
    */
-  timestamp: number
+  timestamp?: number
   /**
    * Serves as component's identifier (e.g., 'climate_sensor')
    */

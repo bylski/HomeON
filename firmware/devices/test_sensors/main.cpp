@@ -54,27 +54,34 @@ void setup() {
 }
 
 void loop() {
-    // mqtt_client.client().loop();
+    digitalWrite(TRIG_PIN, LOW);
+    delayMicroseconds(2);
 
-    // digitalWrite(TRIG_PIN, LOW);
-    // delayMicroseconds(2);
+    digitalWrite(TRIG_PIN, HIGH);
+    delayMicroseconds(10);
+    digitalWrite(TRIG_PIN, LOW);
 
-    // digitalWrite(TRIG_PIN, HIGH);
-    // delayMicroseconds(10);
-    // digitalWrite(TRIG_PIN, LOW);
+    long duration = pulseIn(ECHO_PIN, HIGH, 30000);
 
-    // long duration = pulseIn(ECHO_PIN, HIGH, 30000);
+    int distance = duration / 58;
+    Serial.print("Distance: ");
+    Serial.print(distance);
+    Serial.println(" cm");
 
-    // int distance = duration / 58;
-    // Serial.print("Distance: ");
-    // Serial.print(distance);
-    // Serial.println(" cm");
+    if (distance > 100) {
+        digitalWrite(LED_PIN, HIGH);
+    } else {
+        digitalWrite(LED_PIN, LOW);
+    }
 
-    // if (distance > 100) {
-    //     digitalWrite(LED_PIN, HIGH);
-    // } else {
-    //     digitalWrite(LED_PIN, LOW);
-    // }
+    ComponentTelemetryEvent ultrasonic_telemetry = {.id = ULTRASONIC_SENSOR.id,
+                                                    .metric = "distance",
+                                                    .value = distance,
+                                                    .unit = "cm",
+                                                    .state = "MEASURING"};
 
-    // delay(200);
+    mqtt_client.publish(ultrasonic_telemetry, Config::DEVICE_ID,
+                        ("/" + ULTRASONIC_SENSOR.id).c_str());
+
+    delay(200);
 }

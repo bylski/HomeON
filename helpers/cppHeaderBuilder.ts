@@ -1,6 +1,6 @@
 import { SchemaPrimitiveType } from './jsonSchema'
 
-type StructKeyType = SchemaPrimitiveType | 'jsonVariant' | (string & {})
+type StructKeyType = SchemaPrimitiveType | 'variant' | (string & {})
 
 export type StructKey = {
   key: string
@@ -13,7 +13,7 @@ export type StructKey = {
 )
 
 export class CppHeaderBuilder {
-  private includes = new Set<string>(['Arduino.h', 'ArduinoJson.h', 'vector'])
+  private includes = new Set<string>(['Arduino.h', 'ArduinoJson.h', 'vector', 'variant'])
 
   private headerBlocks: string[] = []
   private structBlocks: string[] = []
@@ -40,7 +40,7 @@ export class CppHeaderBuilder {
     if (type === 'number') return 'double'
     if (type === 'boolean') return 'bool'
     if (type === 'string') return 'String'
-    if (type === 'jsonVariant') return 'JsonVariant'
+    if (type === 'variant') return 'std::variant<int, double, bool, String>'
     return type
   }
 
