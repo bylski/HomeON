@@ -6,6 +6,7 @@ import {
   type ComponentTelemetryEvent,
 } from '@home-on/generated'
 import { z } from 'zod'
+import { COMPONENT_TYPES } from '../contract/events'
 
 const MetricSchema: z.ZodType<MetricMetadata> = z.object({
   metric_id: z.string(),
@@ -25,7 +26,7 @@ const CommandSchema: z.ZodType<CommandMetadata> = z.object({
 
 const ComponentConfigSchema: z.ZodType<ComponentConfig> = z.object({
   id: z.string(),
-  type: z.enum(['SENSOR', 'SWITCH', 'DISPLAY', 'MOTOR', 'SERVO', 'LIGHT']),
+  type: z.enum(COMPONENT_TYPES),
   metrics: z.array(MetricSchema).optional(),
   commands: z.array(CommandSchema).optional(),
 })
@@ -38,14 +39,13 @@ export const discoveryEventSchema: z.ZodType<DeviceDiscoveryEvent> = z
   })
   .strict()
 
-
-  export const telemetryEventSchema: z.ZodType<ComponentTelemetryEvent> = z
+export const telemetryEventSchema: z.ZodType<ComponentTelemetryEvent> = z
   .object({
     timestamp: z.number().optional(),
     id: z.string(),
     metric: z.string(),
     value: z.any(),
     unit: z.string().optional(),
-    state: z.string().optional()
+    state: z.string().optional(),
   })
   .strict()

@@ -10,8 +10,10 @@ type OnEventCallback<TPrefix extends TopicPrefix> = (
   payload: TopicPayload<TPrefix>,
 ) => void
 
+type StoredCallback = (topic: string, payload: any) => void
+
 let client: mqtt.MqttClient
-const subscriptionsWithCallbacks: Map<string, OnEventCallback<TopicPrefix>[]> = new Map()
+const subscriptionsWithCallbacks: Map<string, StoredCallback[]> = new Map()
 
 const logger = buildLogger('[MQTT]')
 
@@ -85,6 +87,7 @@ export const onEvent = <TPrefix extends TopicPrefix>(
 ) => {
   if (topicPrefix.includes('+') || topicSuffix.includes('+')) {
     logger.error(`'+' Wildcard is not supported for topics`)
+    return
   }
 
   const topic = topicPrefix + topicSuffix

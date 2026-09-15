@@ -2,10 +2,7 @@ import './envConfig.js' // keep at the top to make sure envs are available insid
 import express from 'express'
 import cors from 'cors'
 import * as mqtt from './libs/mqtt/index.js'
-import { DeviceDiscoveryEvent, type ComponentTelemetryEvent } from '@home-on/generated'
 import './libs/drizzle'
-
-let telemetryEvents: ComponentTelemetryEvent[]
 
 const app = express()
 app.use(cors())
