@@ -21,3 +21,6 @@ export const metricsMetadata = snakeCase.table(
     }).onDelete('cascade'),
   ],
 )
+
+export type MetricMetadata = typeof metricsMetadata.$inferSelect
+export type NewMetricMetadata = typeof metricsMetadata.$inferInsert

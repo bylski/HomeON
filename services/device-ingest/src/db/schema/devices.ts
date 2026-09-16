@@ -4,3 +4,6 @@ export const devices = snakeCase.table('devices', {
   /**  `device_id` from discovery event*/
   id: varchar({ length: 100 }).primaryKey(),
 })
+
+export type Device = typeof devices.$inferSelect
+export type NewDevice = typeof devices.$inferInsert

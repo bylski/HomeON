@@ -3,14 +3,15 @@ import express from 'express'
 import cors from 'cors'
 import * as mqtt from './libs/mqtt/index.js'
 import './libs/drizzle'
+import * as discovery from './discovery'
 
 const app = express()
 app.use(cors())
 mqtt.setup()
 
-mqtt.onEvent('home-on/discovery/', '#', (d, event) => {
-  console.log(`MESSAGE IS ${JSON.stringify(event)}`)
-})
+app.use('/discovery', discovery.router)
+
+discovery.listeners()
 
 mqtt.onEvent('home-on/telemetry/', 'test_sensors/ultrasonic_sensor', (d, event) => {
   console.log(`TELEMETRY MESSAGE IS ${JSON.stringify(event)}`)

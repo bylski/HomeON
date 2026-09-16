@@ -6,7 +6,7 @@ export const commandsMetadata = snakeCase.table(
   'commands_metadata',
   {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
-    componentId: varchar({ length: 100 }).notNull().notNull(),
+    componentId: varchar({ length: 100 }).notNull(),
     deviceId: varchar({ length: 100 }).notNull(),
 
     command: varchar({ length: 100 }).notNull(),
@@ -24,3 +24,6 @@ export const commandsMetadata = snakeCase.table(
     }).onDelete('cascade'),
   ],
 )
+
+export type CommandMetadata = typeof commandsMetadata.$inferSelect
+export type NewCommandMetadata = typeof commandsMetadata.$inferInsert

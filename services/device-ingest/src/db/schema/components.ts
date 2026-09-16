@@ -19,3 +19,6 @@ export const components = snakeCase.table(
   },
   (table) => [unique('components_device_component_unique').on(table.deviceId, table.componentId)],
 )
+
+export type Component = typeof components.$inferSelect
+export type NewComponent = typeof components.$inferInsert
