@@ -13,9 +13,9 @@ app.use('/discovery', discovery.router)
 
 discovery.listeners()
 
-mqtt.onEvent('home-on/telemetry/', 'test_sensors/ultrasonic_sensor', (d, event) => {
-  console.log(`TELEMETRY MESSAGE IS ${JSON.stringify(event)}`)
-})
+// mqtt.onEvent('home-on/telemetry/', 'test_sensors/ultrasonic_sensor', (d, event) => {
+//   console.log(`TELEMETRY MESSAGE IS ${JSON.stringify(event)}`)
+// })
 
 app.listen(3000, () => {
   console.log('APP LISTENS ON PORT 3000')

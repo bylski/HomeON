@@ -21,6 +21,10 @@ export interface DeviceDiscoveryEvent {
    * Unique board identifier (e.g., 'living_room_esp32')
    */
   device_id: string
+  /**
+   * Human-readable device name (e.g. 'Smart Roller blind')
+   */
+  name: string
   ip_address?: string
   components: ComponentConfig[]
 }
@@ -32,6 +36,10 @@ export interface ComponentConfig {
    * Matches 'id' in ComponentTelemetryEvent (e.g., 'climate_sensor')
    */
   id: string
+  /**
+   * The human-readable name of component e.g. 'Climate sensor'
+   */
+  name: string
   /**
    * UI widget hint for web dashboard
    */
@@ -50,9 +58,17 @@ export interface ComponentConfig {
  */
 export interface MetricMetadata {
   /**
-   * Specific metric key (e.g., 'temperature', 'humidity')
+   * Metric identifier (e.g. 'm_temperature_reading')
    */
   metric_id: string
+  /**
+   * Human-readable metric name (e.g. 'Temperature reading')
+   */
+  name: string
+  /**
+   * Specific metric key (e.g., 'temperature', 'humidity')
+   */
+  metric: string
   /**
    * Unit of measurement required for automation logic (e.g., '°C', '%', 'RPM')
    */
@@ -64,6 +80,14 @@ export interface MetricMetadata {
  * Metadata definition for abstract actions accepted by a component.
  */
 export interface CommandMetadata {
+  /**
+   * Command identifier (e.g. c_turn_left)
+   */
+  command_id: string
+  /**
+   * Human-readable command name (e.g. 'Turn left)
+   */
+  name: string
   /**
    * Abstract high-level action (e.g., 'SET_TEMP', 'TURN_ON', 'MOVE_LEFT')
    */

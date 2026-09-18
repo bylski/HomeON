@@ -5,6 +5,7 @@ import { metricsMetadata, type NewMetricMetadata } from '../../db/schema/metrics
 import { commandsMetadata, type NewCommandMetadata } from '../../db/schema/commandsMetadata'
 import db, { prepareUpdateOnConflictSet } from '../../libs/drizzle'
 import { and, eq, sql } from 'drizzle-orm'
+import { getFullDevice } from '../repository/devices'
 
 type DiscoveryDataToSave = {
   device: NewDevice
@@ -13,28 +14,80 @@ type DiscoveryDataToSave = {
   commandsMetadata: NewCommandMetadata[]
 }
 
-const handleDiscovery = async (topic: string, payload: DeviceDiscoveryEvent) => {
+const handleDiscovery = async (_topic: string, payload: DeviceDiscoveryEvent) => {
   const toSave = extractDiscoveryDataToSave(payload)
 
   db.transaction(async (tx) => {
-    const deviceId = toSave.device.id
-    // devices should have static id - if changed it is treated as new device
-    await tx.insert(devices).values(toSave.device).onConflictDoNothing()
-    // remove possibly stale metadata
-    await db.delete(components).where(eq(components.deviceId, deviceId))
-    await db.delete(commandsMetadata).where(eq(commandsMetadata.deviceId, deviceId))
-    await db.delete(metricsMetadata).where(eq(metricsMetadata.deviceId, deviceId))
-    // fill db with new metadata
-    await db.insert(components).values(toSave.components)
-    await db.insert(commandsMetadata).values(toSave.commandsMetadata)
-    await db.insert(metricsMetadata).values(toSave.metricsMetadata)
+    await tx
+      .insert(devices)
+      .values(toSave.device)
+      .onConflictDoUpdate({
+        set: prepareUpdateOnConflictSet(devices, { id: false, name: true }),
+        target: devices.id,
+      })
+
+    await tx
+      .insert(components)
+      .values(toSave.components)
+      .onConflictDoUpdate({
+        set: prepareUpdateOnConflictSet(components, {
+          id: false,
+          deviceId: false,
+          componentId: false,
+          name: true,
+          type: true,
+        }),
+        target: [components.deviceId, components.componentId],
+      })
+
+    await tx
+      .insert(metricsMetadata)
+      .values(toSave.metricsMetadata)
+      .onConflictDoUpdate({
+        set: prepareUpdateOnConflictSet(metricsMetadata, {
+          id: false,
+          deviceId: false,
+          componentId: false,
+          metricId: false,
+          metric: true,
+          name: true,
+          maxValue: true,
+          minValue: true,
+          unit: true,
+        }),
+        target: [metricsMetadata.deviceId, metricsMetadata.componentId, metricsMetadata.metricId],
+      })
+
+    await tx
+      .insert(commandsMetadata)
+      .values(toSave.commandsMetadata)
+      .onConflictDoUpdate({
+        set: prepareUpdateOnConflictSet(commandsMetadata, {
+          id: false,
+          deviceId: false,
+          componentId: false,
+          commandId: false,
+          command: true,
+          commandTopic: true,
+          name: true,
+          maxValue: true,
+          minValue: true,
+          allowedValues: true,
+          description: true,
+        }),
+        target: [
+          commandsMetadata.deviceId,
+          commandsMetadata.componentId,
+          commandsMetadata.commandId,
+        ],
+      })
   })
 }
 
 export default handleDiscovery
 
 const extractDiscoveryDataToSave = (event: DeviceDiscoveryEvent): DiscoveryDataToSave => {
-  const newDevice: NewDevice = { id: event.device_id }
+  const newDevice: NewDevice = { id: event.device_id, name: event.name }
   const newComponents: NewComponent[] = []
   const newMetricsMetadata: NewMetricMetadata[] = []
   const newCommandsMetadata: NewCommandMetadata[] = []
@@ -42,6 +95,7 @@ const extractDiscoveryDataToSave = (event: DeviceDiscoveryEvent): DiscoveryDataT
   for (const component of event.components) {
     newComponents.push({
       deviceId: event.device_id,
+      name: component.name,
       componentId: component.id,
       type: component.type,
     })
@@ -50,6 +104,8 @@ const extractDiscoveryDataToSave = (event: DeviceDiscoveryEvent): DiscoveryDataT
       newMetricsMetadata.push({
         deviceId: event.device_id,
         componentId: component.id,
+        metricId: metric.metric_id,
+        name: metric.name,
         metric: metric.metric_id,
         unit: metric.unit,
         minValue: metric.min_value?.toString(),
@@ -61,6 +117,8 @@ const extractDiscoveryDataToSave = (event: DeviceDiscoveryEvent): DiscoveryDataT
       newCommandsMetadata.push({
         deviceId: event.device_id,
         componentId: component.id,
+        commandId: command.command_id,
+        name: command.name,
         command: command.command,
         commandTopic: command.command_topic,
         allowedValues: command.allowed_values,

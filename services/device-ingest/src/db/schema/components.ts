@@ -10,9 +10,9 @@ export const components = snakeCase.table(
     componentId: varchar({ length: 100 }).notNull(),
     deviceId: varchar({ length: 100 })
       .notNull()
-      .references(() => devices.id, { onDelete: 'cascade' })
-      .notNull(),
+      .references(() => devices.id, { onDelete: 'cascade' }),
 
+    name: varchar({ length: 100 }).notNull(),
     type: varchar({
       enum: COMPONENT_TYPES,
     }).notNull(),

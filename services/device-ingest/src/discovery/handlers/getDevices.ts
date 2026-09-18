@@ -1,11 +1,10 @@
 import type { Request, Response } from 'express'
 import type { FullDevice } from '../../contract/devices'
 import db from '../../libs/drizzle'
+import { getAllFullDevices } from '../repository/devices'
 
 export const getDevices = async (req: Request, res: Response) => {
-  const fullDevice = await db.query.devices.findMany({
-    with: { components: { with: { metricsMetadata: true, commandsMetadata: true } } },
-  })
+  const fullDevices = await getAllFullDevices()
 
-  res.json(fullDevice)
+  res.json(fullDevices)
 }

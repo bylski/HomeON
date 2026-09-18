@@ -2,13 +2,17 @@
   "title": "DeviceDiscoveryEvent",
   "description": "Payload sent by a device at boot to announce its components and capabilities.",
   "type": "object",
-  "required": ["device_id", "components"],
+  "required": ["device_id", "components", "name"],
   "additionalProperties": false,
   "x-topic-prefix": "home-on/discovery/",
   "properties": {
     "device_id": {
       "type": "string",
       "description": "Unique board identifier (e.g., 'living_room_esp32')"
+    },
+    "name": {
+      "type": "string",
+      "description": "Human-readable device name (e.g. 'Smart Roller blind')"
     },
     "ip_address": {
       "type": "string"
@@ -25,12 +29,16 @@
       "title": "ComponentConfig",
       "description": "Configuration and metadata for an attached component.",
       "type": "object",
-      "required": ["id", "type"],
+      "required": ["id", "type", "name"],
       "additionalProperties": false,
       "properties": {
         "id": {
           "type": "string",
           "description": "Matches 'id' in ComponentTelemetryEvent (e.g., 'climate_sensor')"
+        },
+        "name": {
+          "type": "string",
+          "description": "The human-readable name of component e.g. 'Climate sensor'"
         },
         "type": {
           "type": "string",
@@ -57,10 +65,18 @@
       "title": "MetricMetadata",
       "description": "Metadata definition for a component telemetry metric.",
       "type": "object",
-      "required": ["metric_id", "unit"],
+      "required": ["metric_id", "metric", "unit", "name"],
       "additionalProperties": false,
       "properties": {
         "metric_id": {
+          "type": "string",
+          "description": "Metric identifier (e.g. 'm_temperature_reading')"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable metric name (e.g. 'Temperature reading')"
+        },
+        "metric": {
           "type": "string",
           "description": "Specific metric key (e.g., 'temperature', 'humidity')"
         },
@@ -76,9 +92,17 @@
       "title": "CommandMetadata",
       "description": "Metadata definition for abstract actions accepted by a component.",
       "type": "object",
-      "required": ["command", "command_topic"],
+      "required": ["command_id", "command", "command_topic", "name"],
       "additionalProperties": false,
       "properties": {
+        "command_id": {
+          "type": "string",
+          "description": "Command identifier (e.g. c_turn_left)"
+        },
+        "name": {
+          "type": "string",
+          "description": "Human-readable command name (e.g. 'Turn left)"
+        },
         "command": {
           "type": "string",
           "description": "Abstract high-level action (e.g., 'SET_TEMP', 'TURN_ON', 'MOVE_LEFT')"

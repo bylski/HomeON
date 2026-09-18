@@ -27,6 +27,8 @@ template <>
 struct Converter<MetricMetadata> {
     static bool toJson(const MetricMetadata& src, JsonVariant dst) {
         dst["metric_id"] = src.metric_id;
+        dst["metric"] = src.metric;
+        dst["name"] = src.name;
         dst["unit"] = src.unit;
         dst["min_value"] = src.min_value;
         dst["max_value"] = src.max_value;
@@ -37,6 +39,8 @@ struct Converter<MetricMetadata> {
 template <>
 struct Converter<CommandMetadata> {
     static bool toJson(const CommandMetadata& src, JsonVariant dst) {
+        dst["command_id"] = src.command_id;
+        dst["name"] = src.name;
         dst["command"] = src.command;
         dst["command_topic"] = src.command_topic;
         dst["allowed_values"] = src.allowed_values;
@@ -51,6 +55,7 @@ template <>
 struct Converter<ComponentConfig> {
     static bool toJson(const ComponentConfig& src, JsonVariant dst) {
         dst["id"] = src.id;
+        dst["name"] = src.name;
         dst["type"] = src.type;
         dst["metrics"] = src.metrics;
         dst["commands"] = src.commands;
@@ -85,6 +90,7 @@ template <>
 struct Converter<DeviceDiscoveryEvent> {
     static bool toJson(const DeviceDiscoveryEvent& src, JsonVariant dst) {
         dst["device_id"] = src.device_id;
+        dst["name"] = src.name;
         dst["ip_address"] = src.ip_address;
         dst["components"] = src.components;
         return true;

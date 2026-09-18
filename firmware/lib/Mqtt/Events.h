@@ -14,12 +14,16 @@ struct ComponentCommandEvent {
 
 struct MetricMetadata {
     String metric_id;
+    String name;
+    String metric;
     String unit;
     double min_value;
     double max_value;
 };
 
 struct CommandMetadata {
+    String command_id;
+    String name;
     String command;
     String command_topic;
     std::vector<String> allowed_values;
@@ -30,6 +34,7 @@ struct CommandMetadata {
 
 struct ComponentConfig {
     String id;
+    String name;
     String type;
     std::vector<MetricMetadata> metrics;
     std::vector<CommandMetadata> commands;
@@ -37,6 +42,7 @@ struct ComponentConfig {
 
 struct DeviceDiscoveryEvent {
     String device_id;
+    String name;
     String ip_address;
     std::vector<ComponentConfig> components;
 };
