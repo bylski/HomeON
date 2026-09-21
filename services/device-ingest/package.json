@@ -1,5 +1,5 @@
 {
-  "name": "device-ingest",
+  "name": "@home-on/device-ingest",
   "version": "1.0.0",
   "main": "app.js",
   "type": "module",
@@ -15,19 +15,16 @@
   "devDependencies": {
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
-    "@types/pg": "^8.23.1",
-    "drizzle-kit": "^1.0.0-rc.4",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   },
   "dependencies": {
-    "@home-on/generated": "*",
+    "@home-on/generated": "workspace:*",
+    "@home-on/drizzle": "workspace:*",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
-    "drizzle-orm": "^1.0.0-rc.4",
     "express": "^5.2.1",
     "mqtt": "^5.15.2",
-    "pg": "^8.23.0",
     "radash": "^12.1.1",
     "zod": "^4.5.4"
   }

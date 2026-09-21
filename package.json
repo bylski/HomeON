@@ -14,9 +14,5 @@
   "dependencies": {
     "json-schema-to-typescript": "^15.0.4",
     "prettier": "^3.9.6"
-  },
-  "workspaces": [
-    "generated",
-    "services/*"
-  ]
+  }
 }

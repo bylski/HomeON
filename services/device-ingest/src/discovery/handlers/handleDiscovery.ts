@@ -1,11 +1,10 @@
-import type { DeviceDiscoveryEvent } from '@home-on/generated'
+import type { DeviceDiscoveryEvent } from '@home-on/generated/events'
 import { devices, type NewDevice } from '../../db/schema/devices'
-import { components, type Component, type NewComponent } from '../../db/schema/components'
+import { components, type NewComponent } from '../../db/schema/components'
 import { metricsMetadata, type NewMetricMetadata } from '../../db/schema/metricsMetadata'
 import { commandsMetadata, type NewCommandMetadata } from '../../db/schema/commandsMetadata'
-import db, { prepareUpdateOnConflictSet } from '../../libs/drizzle'
-import { and, eq, sql } from 'drizzle-orm'
-import { getFullDevice } from '../repository/devices'
+import db from '../../db/index'
+import { prepareUpdateOnConflictSet } from '@home-on/drizzle'
 
 type DiscoveryDataToSave = {
   device: NewDevice
@@ -16,6 +15,8 @@ type DiscoveryDataToSave = {
 
 const handleDiscovery = async (_topic: string, payload: DeviceDiscoveryEvent) => {
   const toSave = extractDiscoveryDataToSave(payload)
+
+  db.insert(devices)
 
   db.transaction(async (tx) => {
     await tx

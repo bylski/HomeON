@@ -1,0 +1,6 @@
+packages:
+  - 'libs/*'
+  - 'services/*'
+  - 'generated'
+allowBuilds:
+  esbuild: true

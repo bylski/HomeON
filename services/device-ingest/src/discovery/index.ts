@@ -1,7 +1,6 @@
 import { Router } from 'express'
-import * as mqtt from '../libs/mqtt/index.js'
+import * as mqtt from '../mqtt/index.js'
 import handleDiscovery from './handlers/handleDiscovery.js'
-import db from '../libs/drizzle/index.js'
 import { getDevices } from './handlers/getDevices.js'
 
 export const router = Router()

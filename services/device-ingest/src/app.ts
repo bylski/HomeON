@@ -1,8 +1,8 @@
 import './envConfig.js' // keep at the top to make sure envs are available inside other imports
 import express from 'express'
 import cors from 'cors'
-import * as mqtt from './libs/mqtt/index.js'
-import './libs/drizzle'
+import * as mqtt from './mqtt/index.js'
+import './db/index.js'
 import * as discovery from './discovery'
 
 const app = express()

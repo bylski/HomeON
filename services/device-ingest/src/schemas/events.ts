@@ -6,7 +6,7 @@ import {
   type ComponentTelemetryEvent,
 } from '@home-on/generated'
 import { z } from 'zod'
-import { COMPONENT_TYPES } from '../contract/events'
+import { COMPONENT_TYPES } from '../../contract/events'
 
 const MetricSchema: z.ZodType<MetricMetadata> = z.object({
   metric_id: z.string(),

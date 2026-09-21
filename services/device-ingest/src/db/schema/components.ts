@@ -1,6 +1,6 @@
 import { integer, snakeCase, unique, varchar } from 'drizzle-orm/pg-core'
 import { devices } from './devices'
-import { COMPONENT_TYPES } from '../../contract/events'
+import { COMPONENT_TYPES } from '../../../contract/events'
 
 export const components = snakeCase.table(
   'components',

@@ -1,21 +1,26 @@
-import { getColumns, sql, type Columns, type SQL, type TableConfig } from 'drizzle-orm'
+import {
+  getColumns,
+  sql,
+  type AnyRelations,
+  type ExtractTablesWithRelations,
+  type Schema,
+  type SQL,
+} from 'drizzle-orm'
 import { toSnakeCase } from 'drizzle-orm/casing'
 import { drizzle } from 'drizzle-orm/node-postgres'
 import type { PgTable } from 'drizzle-orm/pg-core'
-import { relations } from '../../db/relations'
 
-const db = drizzle({
-  connection: {
-    host: process.env.POSTGRES_HOST,
-    port: +(process.env.POSTGRES_PORT ?? 5432),
-    user: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
-    database: 'device-ingest',
-  },
-  relations,
-})
-
-export default db
+export default <TRelations extends AnyRelations>(dbName: string, relations: TRelations) =>
+  drizzle({
+    connection: {
+      host: process.env.POSTGRES_HOST,
+      port: +(process.env.POSTGRES_PORT ?? 5432),
+      user: process.env.POSTGRES_USER,
+      password: process.env.POSTGRES_PASSWORD,
+      database: dbName,
+    },
+    relations,
+  })
 
 export const prepareUpdateOnConflictSet = <
   TTable extends PgTable,

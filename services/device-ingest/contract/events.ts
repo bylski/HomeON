@@ -1,4 +1,4 @@
-import { TopicPrefixesWithTypes, type ComponentConfig } from '@home-on/generated'
+import { TopicPrefixesWithTypes, type ComponentConfig } from '@home-on/generated/events'
 
 export type TopicPrefix = keyof TopicPrefixesWithTypes
 export type TopicPayload<T extends TopicPrefix> = TopicPrefixesWithTypes[T]
