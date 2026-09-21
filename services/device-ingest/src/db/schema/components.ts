@@ -1,4 +1,4 @@
-import { integer, snakeCase, unique, varchar } from 'drizzle-orm/pg-core'
+import { integer, snakeCase, unique, varchar } from '@home-on/drizzle'
 import { devices } from './devices'
 import { COMPONENT_TYPES } from '../../../contract/events'
 

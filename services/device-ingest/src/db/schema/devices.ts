@@ -1,4 +1,4 @@
-import { snakeCase, varchar } from 'drizzle-orm/pg-core'
+import { snakeCase, varchar } from '@home-on/drizzle'
 
 export const devices = snakeCase.table('devices', {
   /**  `device_id` from discovery event*/

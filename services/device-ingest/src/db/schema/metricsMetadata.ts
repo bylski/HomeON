@@ -1,4 +1,4 @@
-import { foreignKey, integer, numeric, snakeCase, unique, varchar } from 'drizzle-orm/pg-core'
+import { foreignKey, integer, numeric, snakeCase, unique, varchar } from '@home-on/drizzle'
 import { components } from './components'
 
 export const metricsMetadata = snakeCase.table(

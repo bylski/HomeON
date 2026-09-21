@@ -1,4 +1,4 @@
-import { defineRelations } from 'drizzle-orm'
+import { defineRelations } from '@home-on/drizzle'
 import { devices } from '../schema/devices'
 import { commandsMetadata } from '../schema/commandsMetadata'
 import { metricsMetadata } from '../schema/metricsMetadata'

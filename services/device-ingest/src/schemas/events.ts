@@ -4,7 +4,7 @@ import {
   DeviceDiscoveryEvent,
   MetricMetadata,
   type ComponentTelemetryEvent,
-} from '@home-on/generated'
+} from '@home-on/generated/events'
 import { z } from 'zod'
 import { COMPONENT_TYPES } from '../../contract/events'
 

@@ -40,3 +40,12 @@ export const prepareUpdateOnConflictSet = <
   }
   return set
 }
+
+export * from 'drizzle-orm'
+export * from 'drizzle-orm/pg-core'
+
+// resolve conflicts between 'drizzle-orm' and 'drizzle-orm/pg-core' exports
+export type { SelectedFields } from 'drizzle-orm/pg-core'
+export type { SelectedFieldsFlat } from 'drizzle-orm/pg-core'
+export type { SelectedFieldsOrdered } from 'drizzle-orm/pg-core'
+export type { TableConfig } from 'drizzle-orm/pg-core'
