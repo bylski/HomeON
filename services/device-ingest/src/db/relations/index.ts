@@ -1,8 +1,8 @@
 import { defineRelations } from '@home-on/drizzle'
-import { devices } from '../schema/devices'
-import { commandsMetadata } from '../schema/commandsMetadata'
-import { metricsMetadata } from '../schema/metricsMetadata'
-import { components } from '../schema/components'
+import { devices } from '../schema/devices.js'
+import { commandsMetadata } from '../schema/commandsMetadata.js'
+import { metricsMetadata } from '../schema/metricsMetadata.js'
+import { components } from '../schema/components.js'
 
 export const relations = defineRelations(
   { devices, components, commandsMetadata, metricsMetadata },

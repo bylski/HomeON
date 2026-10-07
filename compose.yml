@@ -1,0 +1,7 @@
+services:
+  device-ingest:
+    build:
+      context: .
+      dockerfile: services/device-ingest/Dockerfile
+    ports:
+      - '3000:3000'

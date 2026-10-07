@@ -1,5 +1,5 @@
-import { discoveryEventSchema, telemetryEventSchema } from '../src/schemas/events'
-import type { TopicPayload, TopicPrefix } from './events'
+import { discoveryEventSchema, telemetryEventSchema } from '../src/schemas/events.js'
+import type { TopicPayload, TopicPrefix } from './events.js'
 import { z, type ZodType } from 'zod'
 discoveryEventSchema
 

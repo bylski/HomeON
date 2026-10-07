@@ -2,5 +2,8 @@ import dotenv from 'dotenv'
 import path from 'path'
 
 dotenv.config({
-  path: path.resolve(import.meta.dirname, '../../../.env.shared'),
+  path: [
+    path.resolve(import.meta.dirname, '../../../.env.shared'),
+    path.resolve(import.meta.dirname, '../.env'),
+  ],
 })

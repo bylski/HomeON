@@ -1,5 +1,5 @@
 import { foreignKey, integer, numeric, snakeCase, text, unique, varchar } from '@home-on/drizzle'
-import { components } from './components'
+import { components } from './components.js'
 
 export const commandsMetadata = snakeCase.table(
   'commands_metadata',

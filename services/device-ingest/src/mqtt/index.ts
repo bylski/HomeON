@@ -1,9 +1,9 @@
 import * as mqtt from 'mqtt'
-import { buildLogger } from '../../../../libs/logger/index.js'
 import type { TopicPayload, TopicPrefix } from '../../contract/events.js'
 import { TOPIC_PREFIXES } from '@home-on/generated/events'
 import { getTopicWildcardVariations } from './helpers.js'
 import { validateBaseTopicEvent } from '../../contract/validation.js'
+import { buildLogger } from '@home-on/logger/index'
 
 type OnEventCallback<TPrefix extends TopicPrefix> = (
   topic: string,

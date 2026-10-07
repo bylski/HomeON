@@ -1,4 +1,4 @@
-import type { TopicPrefix } from '../../contract/events'
+import type { TopicPrefix } from '../../contract/events.js'
 
 /** Checks for possible multi-level wildcard (#) variations of given topic. */
 export const getTopicWildcardVariations = (topicPrefix: TopicPrefix, topic: string) => {

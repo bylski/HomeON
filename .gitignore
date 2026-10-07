@@ -5,6 +5,7 @@ node_modules
 .vscode
 .env
 .env.shared
+dist
 
 # platformio files
 .pio

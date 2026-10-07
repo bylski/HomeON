@@ -1,6 +1,6 @@
 import { integer, snakeCase, unique, varchar } from '@home-on/drizzle'
-import { devices } from './devices'
-import { COMPONENT_TYPES } from '../../../contract/events'
+import { devices } from './devices.js'
+import { COMPONENT_TYPES } from '../../../contract/events.js'
 
 export const components = snakeCase.table(
   'components',

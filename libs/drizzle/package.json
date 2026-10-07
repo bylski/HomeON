@@ -15,7 +15,6 @@
     "pg": "^8.23.0"
   },
   "devDependencies": {
-    "drizzle-kit": "^1.0.0-rc.4",
     "@types/pg": "^8.23.1"
   },
   "exports": {
