@@ -12,13 +12,13 @@ class WifiService {
     WifiService();
     ~WifiService();
 
-    bool begin(const char* ssid, const char* pass);
+    bool Begin(const char* ssid, const char* pass);
 
-    Client& getClient();
+    Client& GetClient();
 
-    IPAddress getLocalIp();
+    IPAddress GetLocalIp();
 
    private:
-    WiFiClient* _rawClient;
+    WiFiClient* raw_client_;
 };
 }  // namespace HomeOn

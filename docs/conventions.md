@@ -34,6 +34,9 @@ docs/               project documentation
 - Generated files are **never edited by hand**. Commit them together with the schema change.
 - Payloads are validated with zod at the boundary (`contract/validation.ts`) before any handler
   runs. Handlers can trust their typed payload.
+- The zod schemas (`src/schemas/events.ts`) are written by hand, not generated. Each is typed as
+  `z.ZodType<GeneratedType>` so the compiler catches most drift. Any drift it misses shows up as
+  validation failures in handlers, and is fixed there for now.
 - REST DTOs (what a service's HTTP API returns) live in that service's `contract/` folder, e.g.
   `services/device-ingest/contract/devices.ts`. Other packages (e.g. the frontend) import them
   from there.
@@ -46,10 +49,10 @@ docs/               project documentation
 home-on/v1/<event-type>/<device_id>[/<component_id>[/<command>]]
 ```
 
-| Event     | Topic                                                    |
-| --------- | -------------------------------------------------------- |
-| discovery | `home-on/v1/discovery/<device_id>`                       |
-| telemetry | `home-on/v1/telemetry/<device_id>/<component_id>`        |
+| Event     | Topic                                                      |
+| --------- | ---------------------------------------------------------- |
+| discovery | `home-on/v1/discovery/<device_id>`                         |
+| telemetry | `home-on/v1/telemetry/<device_id>/<component_id>`          |
 | command   | `home-on/v1/commands/<device_id>/<component_id>/<command>` |
 
 - The root segment `home-on` is kebab-case. `device_id`, `component_id` and command names are
@@ -167,17 +170,20 @@ Rules:
   format by hand.
 - Naming follows the [Google C++ style guide](https://google.github.io/styleguide/cppguide.html#Naming):
 
-  | Kind                         | Style              | Example                     |
-  | ---------------------------- | ------------------ | --------------------------- |
-  | types (class/struct/enum)    | PascalCase         | `MqttService`, `MqttConfig` |
-  | functions and methods        | PascalCase         | `Connect()`, `Publish()`    |
-  | variables, parameters, fields | snake_case        | `board_id`, `retry_time_ms` |
-  | private class members        | snake_case + `_`   | `client_`                   |
-  | constants                    | `k` + PascalCase   | `kTrigPin`, `kMqttHost`     |
-  | namespaces                   | PascalCase         | `HomeOn`                    |
+  | Kind                          | Style            | Example                     |
+  | ----------------------------- | ---------------- | --------------------------- |
+  | types (class/struct/enum)     | PascalCase       | `MqttService`, `MqttConfig` |
+  | functions and methods         | PascalCase       | `Connect()`, `Publish()`    |
+  | simple accessors (optional)   | like the member  | `client()` for `client_`    |
+  | variables, parameters, fields | snake_case       | `board_id`, `retry_time_ms` |
+  | private class members         | snake_case + `_` | `client_`                   |
+  | constants                     | `k` + PascalCase | `kTrigPin`, `kMqttHost`     |
+  | namespaces                    | PascalCase       | `HomeOn`                    |
 
 - Struct fields that mirror JSON schema keys are snake_case anyway, which keeps the generated
   `Events.h` consistent with hand-written code.
+- Exception: names required by an external API keep that API's spelling (`setup()` / `loop()`
+  for Arduino, `Converter<T>::toJson` for ArduinoJson).
 - All library code goes in `namespace HomeOn`.
 - Libraries (`firmware/lib/`) never depend on a specific device. Each device's specifics (pins,
   IDs, discovery payload) stay in `firmware/devices/<device_id>/`.

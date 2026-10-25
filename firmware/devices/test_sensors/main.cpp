@@ -7,20 +7,20 @@
 
 HomeOn::WifiService wifi_service;
 
-HomeOn::MqttService mqtt_client(wifi_service.getClient(),
+HomeOn::MqttService mqtt_client(wifi_service.GetClient(),
                                 {
-                                    .host = Config::MQTT_HOST,
-                                    .client_id = Config::DEVICE_ID,
-                                    .username = Config::MQTT_USERNAME,
-                                    .password = Config::MQTT_PASSWORD,
-                                    .port = Config::MQTT_PORT,
+                                    .host = Config::kMqttHost,
+                                    .client_id = Config::kDeviceId,
+                                    .username = Config::kMqttUsername,
+                                    .password = Config::kMqttPassword,
+                                    .port = Config::kMqttPort,
                                 });
 
-const uint8_t TRIG_PIN = D1;
-const uint8_t ECHO_PIN = D2;
-const uint8_t LED_PIN = D3;
+const uint8_t kTrigPin = D1;
+const uint8_t kEchoPin = D2;
+const uint8_t kLedPin = D3;
 
-void mqtt_callback(char* topic, byte* payload, unsigned int length) {
+void MqttCallback(char* topic, byte* payload, unsigned int length) {
     char msg[length + 1];
 
     for (unsigned int i = 0; i < length; i++) {
@@ -30,38 +30,38 @@ void mqtt_callback(char* topic, byte* payload, unsigned int length) {
 
     Serial.println(msg);
 
-    if (strcmp(msg, "ON")) {
-        digitalWrite(LED_PIN, HIGH);
-    } else if (strcmp(msg, "OFF")) {
-        digitalWrite(LED_PIN, LOW);
+    if (strcmp(msg, "ON") == 0) {
+        digitalWrite(kLedPin, HIGH);
+    } else if (strcmp(msg, "OFF") == 0) {
+        digitalWrite(kLedPin, LOW);
     }
 };
 
 void setup() {
     Serial.begin(115200);
-    pinMode(ECHO_PIN, INPUT);
-    pinMode(TRIG_PIN, OUTPUT);
-    pinMode(LED_PIN, OUTPUT);
-    digitalWrite(LED_PIN, LOW);
+    pinMode(kEchoPin, INPUT);
+    pinMode(kTrigPin, OUTPUT);
+    pinMode(kLedPin, OUTPUT);
+    digitalWrite(kLedPin, LOW);
 
-    wifi_service.begin(Config::WIFI_SSID, Config::WIFI_PASSWORD);
-    mqtt_client.connect();
+    wifi_service.Begin(Config::kWifiSsid, Config::kWifiPassword);
+    mqtt_client.Connect();
 
-    mqtt_client.publish(DISCOVERY_EVENT, Config::DEVICE_ID, {.retain = true});
+    mqtt_client.Publish(kDiscoveryEvent, Config::kDeviceId, {.retain = true});
 
-    // mqtt_client.client().subscribe(command_topic.c_str());
-    // mqtt_client.client().setCallback(mqtt_callback);
+    // mqtt_client.client().subscribe(command_topic.c_str(), 1);
+    // mqtt_client.client().setCallback(MqttCallback);
 }
 
 void loop() {
-    digitalWrite(TRIG_PIN, LOW);
+    digitalWrite(kTrigPin, LOW);
     delayMicroseconds(2);
 
-    digitalWrite(TRIG_PIN, HIGH);
+    digitalWrite(kTrigPin, HIGH);
     delayMicroseconds(10);
-    digitalWrite(TRIG_PIN, LOW);
+    digitalWrite(kTrigPin, LOW);
 
-    long duration = pulseIn(ECHO_PIN, HIGH, 30000);
+    long duration = pulseIn(kEchoPin, HIGH, 30000);
 
     int distance = duration / 58;
     Serial.print("Distance: ");
@@ -69,19 +69,19 @@ void loop() {
     Serial.println(" cm");
 
     if (distance > 100) {
-        digitalWrite(LED_PIN, HIGH);
+        digitalWrite(kLedPin, HIGH);
     } else {
-        digitalWrite(LED_PIN, LOW);
+        digitalWrite(kLedPin, LOW);
     }
 
-    ComponentTelemetryEvent ultrasonic_telemetry = {.id = ULTRASONIC_SENSOR.id,
+    ComponentTelemetryEvent ultrasonic_telemetry = {.id = kUltrasonicSensor.id,
                                                     .metric = "distance",
                                                     .value = distance,
                                                     .unit = "cm",
                                                     .state = "MEASURING"};
 
-    mqtt_client.publish(ultrasonic_telemetry, Config::DEVICE_ID,
-                        ("/" + ULTRASONIC_SENSOR.id).c_str());
+    mqtt_client.Publish(ultrasonic_telemetry, Config::kDeviceId,
+                        ("/" + kUltrasonicSensor.id).c_str());
 
     delay(200);
 }

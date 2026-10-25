@@ -1,5 +1,6 @@
 import {
   CommandMetadata,
+  type ComponentCommandEvent,
   ComponentConfig,
   DeviceDiscoveryEvent,
   MetricMetadata,
@@ -53,5 +54,13 @@ export const telemetryEventSchema: z.ZodType<ComponentTelemetryEvent> = z
     value: z.any(),
     unit: z.string().optional(),
     state: z.string().optional(),
+  })
+  .strict()
+
+export const commandEventSchema: z.ZodType<ComponentCommandEvent> = z
+  .object({
+    timestamp: z.number().int().nonnegative(),
+    command: z.string(),
+    value: z.union([z.number(), z.string(), z.boolean(), z.null()]).optional(),
   })
   .strict()

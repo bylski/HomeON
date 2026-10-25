@@ -21,7 +21,7 @@ export const generateCppHeaderFile = async (
   for (const [topic, type] of topicsWithType.entries()) {
     builder.addTemplateStruct(templateStructName, type, [
       {
-        key: 'prefix',
+        key: 'kPrefix',
         type: 'static constexpr const std::string_view',
         value: topic,
       },

@@ -12,6 +12,15 @@ type OnEventCallback<TPrefix extends TopicPrefix> = (
 
 type StoredCallback = (topic: string, payload: any) => void
 
+type DeliveryRule = { qos: 0 | 1; retain: boolean }
+
+/** see docs/conventions.md (MQTT delivery rules) - commands use QoS 1, so they must be idempotent */
+const DELIVERY_RULES = {
+  'home-on/v1/discovery/': { qos: 0, retain: true },
+  'home-on/v1/telemetry/': { qos: 0, retain: false },
+  'home-on/v1/commands/': { qos: 1, retain: false },
+} as const satisfies Record<TopicPrefix, DeliveryRule>
+
 let client: mqtt.MqttClient
 const subscriptionsWithCallbacks: Map<string, StoredCallback[]> = new Map()
 
@@ -93,16 +102,21 @@ export const onEvent = <TPrefix extends TopicPrefix>(
   const topic = topicPrefix + topicSuffix
 
   if (!subscriptionsWithCallbacks.has(topic)) {
-    client.subscribe(topic)
+    client.subscribe(topic, { qos: DELIVERY_RULES[topicPrefix].qos })
   }
   // add new callback corresponding to the topic
   const currentCallbacks = subscriptionsWithCallbacks.get(topic) ?? []
   subscriptionsWithCallbacks.set(topic, [...currentCallbacks, callback])
 }
 
-export const publish = (topic: string, data: string) => {
+/** Publishes event under `topicPrefix + topicSuffix` with the delivery rules of its event type. */
+export const publish = <TPrefix extends TopicPrefix>(
+  topicPrefix: TPrefix,
+  topicSuffix: string,
+  payload: TopicPayload<TPrefix>,
+) => {
   try {
-    client.publish(topic, data)
+    client.publish(topicPrefix + topicSuffix, JSON.stringify(payload), DELIVERY_RULES[topicPrefix])
   } catch (e) {
     logger.error(`Error during publishing: ${e}`)
   }

@@ -16,7 +16,7 @@ struct MqttConfig {
     const char* username = nullptr;
     const char* password = nullptr;
     uint16_t port = 1883;
-    uint16_t connectRetryTimeMs = 5000;
+    uint16_t connect_retry_time_ms = 5000;
 };
 
 struct PublishOptions {
@@ -28,24 +28,27 @@ class MqttService {
     MqttService(Client& client, const MqttConfig& config);
     ~MqttService();
 
-    void connect();
+    void Connect();
 
     /** Publishes event under a correct topic based on its payload type. */
     template <typename TPayload>
-    bool publish(const TPayload& payload, const char* board_id,
+    bool Publish(const TPayload& payload, const char* board_id,
                  PublishOptions options) {
-        return publish(payload, board_id, "", options);
+        return Publish(payload, board_id, "", options);
     }
 
-    /** Publishes event under a correct topic based on its payload type. */
+    /** Publishes event under a correct topic based on its payload type.
+     *
+     * PubSubClient always publishes with QoS 0. */
     template <typename TPayload>
-    bool publish(const TPayload& payload, const char* board_id,
+    bool Publish(const TPayload& payload, const char* board_id,
                  const char* topic_suffix = "",
                  PublishOptions options = {.retain = false}) {
-        constexpr std::string_view topic_prefix = TopicTraits<TPayload>::prefix;
+        constexpr std::string_view topic_prefix =
+            TopicTraits<TPayload>::kPrefix;
 
         // results in something like:
-        // "home_on/commands/test_board/red_led/switch"
+        // "home-on/v1/commands/test_board/red_led/switch"
         // topic_suffix can be empty e.g. in discovery event
         String full_topic =
             String(topic_prefix.data()) + board_id + topic_suffix;
@@ -55,7 +58,7 @@ class MqttService {
         doc.set(payload);
         serializeJson(doc, json_payload);
 
-        bool ok = _client.publish(full_topic.c_str(), json_payload.c_str(),
+        bool ok = client_.publish(full_topic.c_str(), json_payload.c_str(),
                                   options.retain);
         if (ok) {
             Serial.println("Publishing " + full_topic + " event");
@@ -68,11 +71,11 @@ class MqttService {
     PubSubClient& client();
 
    private:
-    PubSubClient _client;
-    MqttConfig _config;
+    PubSubClient client_;
+    MqttConfig config_;
 
-    void connectClient() {
-        _client.connect(_config.client_id, _config.username, _config.password);
+    void ConnectClient() {
+        client_.connect(config_.client_id, config_.username, config_.password);
     }
 };
 

@@ -60,15 +60,15 @@ template <typename T>
 struct TopicTraits;
 template <>
 struct TopicTraits<ComponentCommandEvent> {
-    static constexpr const std::string_view prefix = "home-on/commands/";
+    static constexpr const std::string_view kPrefix = "home-on/v1/commands/";
 };
 
 template <>
 struct TopicTraits<DeviceDiscoveryEvent> {
-    static constexpr const std::string_view prefix = "home-on/discovery/";
+    static constexpr const std::string_view kPrefix = "home-on/v1/discovery/";
 };
 
 template <>
 struct TopicTraits<ComponentTelemetryEvent> {
-    static constexpr const std::string_view prefix = "home-on/telemetry/";
+    static constexpr const std::string_view kPrefix = "home-on/v1/telemetry/";
 };

@@ -4,11 +4,11 @@
 
 namespace HomeOn {
 
-WifiService::WifiService() { _rawClient = new WiFiClient(); }
+WifiService::WifiService() { raw_client_ = new WiFiClient(); }
 
-WifiService::~WifiService() { delete _rawClient; }
+WifiService::~WifiService() { delete raw_client_; }
 
-bool WifiService::begin(const char* ssid, const char* pass) {
+bool WifiService::Begin(const char* ssid, const char* pass) {
     WiFi.begin(ssid, pass);
 
     Serial.print("\nConnecting to WiFi...");
@@ -21,8 +21,8 @@ bool WifiService::begin(const char* ssid, const char* pass) {
     return true;
 }
 
-IPAddress WifiService::getLocalIp() { return WiFi.localIP(); }
+IPAddress WifiService::GetLocalIp() { return WiFi.localIP(); }
 
-Client& WifiService::getClient() { return *_rawClient; }
+Client& WifiService::GetClient() { return *raw_client_; }
 
 }  // namespace HomeOn

@@ -4,7 +4,7 @@
   "type": "object",
   "required": ["device_id", "components", "name"],
   "additionalProperties": false,
-  "x-topic-prefix": "home-on/discovery/",
+  "x-topic-prefix": "home-on/v1/discovery/",
   "properties": {
     "device_id": {
       "type": "string",

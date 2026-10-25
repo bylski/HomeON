@@ -10,7 +10,7 @@ router.get('/devices', async (req, res) => {
 })
 
 export const listeners = async () => {
-  mqtt.onEvent('home-on/discovery/', '#', async (topic, payload) => {
+  mqtt.onEvent('home-on/v1/discovery/', '#', async (topic, payload) => {
     await handleDiscovery(topic, payload)
   })
 }

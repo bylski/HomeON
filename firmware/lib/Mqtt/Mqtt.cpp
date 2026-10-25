@@ -4,33 +4,33 @@
 namespace HomeOn {
 
 MqttService::MqttService(Client& client, const MqttConfig& config)
-    : _client(client), _config(config) {
-    _config = config;
-    if (_config.host != nullptr) {
-        _client.setServer(_config.host, _config.port);
+    : client_(client), config_(config) {
+    config_ = config;
+    if (config_.host != nullptr) {
+        client_.setServer(config_.host, config_.port);
     }
-    _client.setBufferSize(2048);
+    client_.setBufferSize(2048);
 }
 
 MqttService::~MqttService() {}
 
-void MqttService::connect() {
-    connectClient();
+void MqttService::Connect() {
+    ConnectClient();
 
     Serial.print("\nTrying to connect to MQTT server...");
-    while (!_client.connected()) {
+    while (!client_.connected()) {
         Serial.print("Connection failed, retrying in ");
-        Serial.print(String(_config.connectRetryTimeMs / 1000));
+        Serial.print(String(config_.connect_retry_time_ms / 1000));
         Serial.println(" seconds");
 
-        delay(_config.connectRetryTimeMs);
+        delay(config_.connect_retry_time_ms);
         Serial.println("Retrying to establish MQTT connection...");
-        connectClient();
+        ConnectClient();
     }
     Serial.println();
     Serial.println("Successfully connected to MQTT broker");
 }
 
-PubSubClient& MqttService::client() { return _client; }
+PubSubClient& MqttService::client() { return client_; }
 
 }  // namespace HomeOn

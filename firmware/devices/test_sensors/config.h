@@ -27,11 +27,11 @@
 #endif
 
 namespace Config {
-constexpr const char* WIFI_SSID = ENV_WIFI_SSID;
-constexpr const char* WIFI_PASSWORD = ENV_WIFI_PASSWORD;
-constexpr const uint16_t MQTT_PORT = ENV_MQTT_PORT;
-constexpr const char* MQTT_USERNAME = ENV_MQTT_USERNAME;
-constexpr const char* MQTT_PASSWORD = ENV_MQTT_PASSWORD;
-constexpr const char* MQTT_HOST = ENV_MQTT_HOST;
-constexpr const char* DEVICE_ID = "test_sensors";
+constexpr const char* kWifiSsid = ENV_WIFI_SSID;
+constexpr const char* kWifiPassword = ENV_WIFI_PASSWORD;
+constexpr const uint16_t kMqttPort = ENV_MQTT_PORT;
+constexpr const char* kMqttUsername = ENV_MQTT_USERNAME;
+constexpr const char* kMqttPassword = ENV_MQTT_PASSWORD;
+constexpr const char* kMqttHost = ENV_MQTT_HOST;
+constexpr const char* kDeviceId = "test_sensors";
 }  // namespace Config
