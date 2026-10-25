@@ -13,12 +13,12 @@ All server-side parts run as Docker containers on a Raspberry Pi 3B+ under Docke
 ## Communication
 
 - Devices and services communicate only over **MQTT**. The topic structure and delivery rules are
-  in [conventions.md](conventions.md#3-mqtt).
+  in [conventions/mqtt.md](conventions/mqtt.md).
 - Sensors publish data on specific topics. **More than one service may listen to the same
   topics**, and that is preferred over funnelling everything through a single service.
 - The frontend talks to services over REST.
 - The three event types (discovery, telemetry, commands) are defined once in `config/schemas/` and
-  generated into C++ and TypeScript. See [conventions.md](conventions.md#2-event-contracts-single-source-of-truth).
+  generated into C++ and TypeScript. See [conventions/contracts.md](conventions/contracts.md).
 
 ## Services
 

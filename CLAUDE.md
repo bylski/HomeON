@@ -7,7 +7,8 @@ a React frontend.
 Project goals are in [docs/goals.md](docs/goals.md) and the system overview is in
 [docs/architecture.md](docs/architecture.md).
 
-Read [docs/conventions.md](docs/conventions.md) before writing code. The key rules:
+Read the relevant files in [docs/conventions/](docs/conventions/README.md) before writing code.
+The key rules:
 
 - **Contracts:** MQTT payloads are defined only in `config/schemas/*.json`. After any change run
   `pnpm generate-configs`. Never edit `generated/events.ts` or `firmware/lib/Mqtt/Events.h` by hand.
