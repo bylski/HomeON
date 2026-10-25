@@ -4,6 +4,9 @@ A home-automation platform: ESP microcontrollers (PlatformIO firmware) talk over
 microservices running in Docker Compose on a Raspberry Pi. Data is stored in Postgres and shown in
 a React frontend.
 
+Project goals are in [docs/goals.md](docs/goals.md) and the system overview is in
+[docs/architecture.md](docs/architecture.md).
+
 Read [docs/conventions.md](docs/conventions.md) before writing code. The key rules:
 
 - **Contracts:** MQTT payloads are defined only in `config/schemas/*.json`. After any change run
