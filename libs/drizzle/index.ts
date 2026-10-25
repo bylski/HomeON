@@ -2,8 +2,8 @@ import {
   getColumns,
   sql,
   type AnyRelations,
-  type ExtractTablesWithRelations,
-  type Schema,
+  type BuildQueryResult,
+  type DBQueryConfigWith,
   type SQL,
 } from 'drizzle-orm'
 import { toSnakeCase } from 'drizzle-orm/casing'
@@ -21,6 +21,19 @@ export default <TRelations extends AnyRelations>(dbName: string, relations: TRel
     },
     relations,
   })
+
+/** `with` clause accepted by `db.query[TTable]`, e.g. `{ components: true }`. */
+export type DbQueryWith<
+  TRelations extends AnyRelations,
+  TTable extends keyof TRelations,
+> = DBQueryConfigWith<TRelations, TRelations[TTable]['relations']>
+
+/** Row shape returned by `db.query[TTable].findMany`/`findFirst` for a given `with` clause. */
+export type DbQueryResult<
+  TRelations extends AnyRelations,
+  TTable extends keyof TRelations,
+  TWith extends DbQueryWith<TRelations, TTable> = {},
+> = BuildQueryResult<TRelations, TRelations[TTable], { with: TWith }>
 
 export const prepareUpdateOnConflictSet = <
   TTable extends PgTable,

@@ -1,22 +1,21 @@
 import type { FullDeviceDTO } from '../../../contract/devices.js'
 import db from '../../db/index.js'
-import type { Device } from '../../db/schema/devices.js'
+import { toFullDeviceDTO } from '../mappers.js'
+import { FULL_DEVICE_WITH } from '../types.js'
 
-//fixme should return DTO
-// export const getAllFullDevices = async (): Promise<Device[]> =>
-//   db.query.devices.findMany({
-//     with: { components: { with: { metricsMetadata: true, commandsMetadata: true } } },
-//   })
+export const getAllFullDevices = async (): Promise<FullDeviceDTO[]> => {
+  const devices = await db.query.devices.findMany({ with: FULL_DEVICE_WITH })
 
-// export const getFullDevice = async (id: string): Promise<Device | undefined> => {
-//   const device = db.query.devices.findFirst({
-//     where: { id },
-//     with: { components: { with: { metricsMetadata: true, commandsMetadata: true } } },
-//   })
+  return devices.map(toFullDeviceDTO)
+}
 
-//   if (!device) {
-//     console.warn('No device found!')
-//   }
+export const getFullDevice = async (id: string): Promise<FullDeviceDTO | undefined> => {
+  const device = await db.query.devices.findFirst({ where: { id }, with: FULL_DEVICE_WITH })
 
-//   return device
-// }
+  if (!device) {
+    console.warn('No device found!')
+    return undefined
+  }
+
+  return toFullDeviceDTO(device)
+}
