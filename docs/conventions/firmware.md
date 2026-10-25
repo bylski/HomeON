@@ -9,17 +9,17 @@ format by hand.
 
 Naming follows the [Google C++ style guide](https://google.github.io/styleguide/cppguide.html#Naming):
 
-| Kind                          | Style              | Example                        |
-| ----------------------------- | ------------------ | ------------------------------ |
-| types (class/struct/enum)     | PascalCase         | `MqttService`, `MqttConfig`    |
-| functions and methods         | PascalCase         | `Connect()`, `Publish()`       |
-| simple accessors (optional)   | like the member    | `client()` for `client_`       |
-| variables, parameters         | snake_case         | `board_id`, `distance`         |
-| struct fields                 | snake_case         | `connect_retry_time_ms`        |
-| class data members            | snake_case + `_`   | `client_`, `config_`           |
-| constants                     | `k` + PascalCase   | `kTrigPin`, `kMqttHost`        |
-| macros (`#define`)            | UPPER_CASE         | `ENV_WIFI_SSID`                |
-| namespaces                    | PascalCase         | `HomeOn`                       |
+| Kind                        | Style            | Example                     |
+| --------------------------- | ---------------- | --------------------------- |
+| types (class/struct/enum)   | PascalCase       | `MqttService`, `MqttConfig` |
+| functions and methods       | PascalCase       | `Connect()`, `Publish()`    |
+| simple accessors (optional) | like the member  | `client()` for `client_`    |
+| variables, parameters       | snake_case       | `board_id`, `distance`      |
+| struct fields               | snake_case       | `connect_retry_time_ms`     |
+| class data members          | snake_case + `_` | `client_`, `config_`        |
+| constants                   | `k` + PascalCase | `kTrigPin`, `kMqttHost`     |
+| macros (`#define`)          | UPPER_CASE       | `ENV_WIFI_SSID`             |
+| namespaces                  | PascalCase       | `HomeOn`                    |
 
 ### When to use the `k` prefix
 

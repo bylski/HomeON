@@ -31,11 +31,11 @@ Communication over SPI or I2C is out of scope for now. The current reference dev
 
 ## Status
 
-| Requirement            | Status                                                             |
-| ---------------------- | ------------------------------------------------------------------ |
-| Device discovery       | done over MQTT (discovery event + upsert into Postgres); no mDNS yet |
-| Telemetry collection   | in progress: firmware publishes, backend receives, not stored yet  |
-| Visualisation          | not started (frontend scaffold only)                               |
-| Commands to devices    | contract defined, not implemented end to end                       |
-| OTA upload             | not started                                                        |
-| Encryption / auth      | not started (MQTT uses username + password, no TLS)                |
+| Requirement          | Status                                                               |
+| -------------------- | -------------------------------------------------------------------- |
+| Device discovery     | done over MQTT (discovery event + upsert into Postgres); no mDNS yet |
+| Telemetry collection | in progress: firmware publishes, backend receives, not stored yet    |
+| Visualisation        | not started (frontend scaffold only)                                 |
+| Commands to devices  | contract defined, not implemented end to end                         |
+| OTA upload           | not started                                                          |
+| Encryption / auth    | not started (MQTT uses username + password, no TLS)                  |

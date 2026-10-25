@@ -10,11 +10,12 @@ type OnEventCallback<TPrefix extends TopicPrefix> = (
   payload: TopicPayload<TPrefix>,
 ) => void
 
-type StoredCallback = (topic: string, payload: any) => void
+/** callbacks of all prefixes share one map, so their payload types are erased to the union */
+type StoredCallback = OnEventCallback<TopicPrefix>
 
 type DeliveryRule = { qos: 0 | 1; retain: boolean }
 
-/** see docs/conventions.md (MQTT delivery rules) - commands use QoS 1, so they must be idempotent */
+/** see docs/conventions/mqtt.md (delivery rules) - commands use QoS 1, so they must be idempotent */
 const DELIVERY_RULES = {
   'home-on/v1/discovery/': { qos: 0, retain: true },
   'home-on/v1/telemetry/': { qos: 0, retain: false },
@@ -106,7 +107,7 @@ export const onEvent = <TPrefix extends TopicPrefix>(
   }
   // add new callback corresponding to the topic
   const currentCallbacks = subscriptionsWithCallbacks.get(topic) ?? []
-  subscriptionsWithCallbacks.set(topic, [...currentCallbacks, callback])
+  subscriptionsWithCallbacks.set(topic, [...currentCallbacks, callback as StoredCallback])
 }
 
 /** Publishes event under `topicPrefix + topicSuffix` with the delivery rules of its event type. */

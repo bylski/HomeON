@@ -4,7 +4,7 @@ import {
   telemetryEventSchema,
 } from '../src/schemas/events.js'
 import type { TopicPayload, TopicPrefix } from './events.js'
-import { z, type ZodType } from 'zod'
+import type { ZodType } from 'zod'
 
 const TOPIC_PREFIX_SCHEMA_MAP = {
   'home-on/v1/discovery/': discoveryEventSchema,

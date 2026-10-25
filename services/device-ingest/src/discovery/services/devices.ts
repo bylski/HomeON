@@ -3,8 +3,10 @@ import type { NewDevice } from '../../db/schema/devices.js'
 import type { NewComponent } from '../../db/schema/components.js'
 import type { NewMetricMetadata } from '../../db/schema/metricsMetadata.js'
 import type { NewCommandMetadata } from '../../db/schema/commandsMetadata.js'
-import { upsertDiscoveredDevice } from '../repository/devices.js'
+import { getAllFullDevices, upsertDiscoveredDevice } from '../repository/devices.js'
 import type { DiscoveryDataToSave } from '../types.js'
+
+export const getAllDevices = () => getAllFullDevices()
 
 export const saveDiscoveredDevice = async (event: DeviceDiscoveryEvent) => {
   await upsertDiscoveredDevice(extractDiscoveryDataToSave(event))

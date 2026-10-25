@@ -1,0 +1,2 @@
+# keep LF everywhere (matches .prettierrc endOfLine) regardless of core.autocrlf
+* text=auto eol=lf

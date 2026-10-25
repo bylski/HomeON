@@ -9,5 +9,5 @@ export type QueryWith<TTable extends keyof Relations> = DbQueryWith<Relations, T
 /** {@link DbQueryResult} bound to this service's relations. */
 export type QueryResult<
   TTable extends keyof Relations,
-  TWith extends QueryWith<TTable> = {},
+  TWith extends QueryWith<TTable> = Record<never, never>,
 > = DbQueryResult<Relations, TTable, TWith>

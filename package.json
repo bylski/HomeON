@@ -4,10 +4,19 @@
   "private": true,
   "scripts": {
     "generate-configs": "npx tsx ./scripts/generateConfigFiles/index.ts",
-    "upload": "pio run --project-dir firmware -t upload -e"
+    "upload": "pio run --project-dir firmware -t upload -e",
+    "lint": "eslint . && prettier --check . && tsx scripts/lintCpp.ts && pnpm typecheck",
+    "format": "eslint . --fix && prettier --write . && tsx scripts/lintCpp.ts --fix",
+    "typecheck": "tsc --noEmit -p . && pnpm -r typecheck",
+    "check:codegen": "tsx scripts/checkCodegen.ts",
+    "prepare": "husky"
   },
   "devDependencies": {
+    "@home-on/eslint-config": "workspace:*",
     "@types/node": "^26.2.0",
+    "eslint": "^10.11.0",
+    "husky": "^9.1.7",
+    "lint-staged": "^17.6.0",
     "tsx": "^4.23.12",
     "typescript": "^7.0.2"
   },

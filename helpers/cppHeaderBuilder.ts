@@ -1,4 +1,4 @@
-import { SchemaPrimitiveType } from './jsonSchema'
+import { type SchemaPrimitiveType } from './jsonSchema'
 
 type StructKeyType = SchemaPrimitiveType | 'variant' | (string & {})
 
@@ -79,7 +79,11 @@ export class CppHeaderBuilder {
   addStruct(name: string, fields: StructKey[]) {
     this.write.struct(`struct ${name} {`)
     for (const field of fields) {
-      'itemType' in field ? this.addStructArrayKey(field) : this.addStructKey(field)
+      if ('itemType' in field) {
+        this.addStructArrayKey(field)
+      } else {
+        this.addStructKey(field)
+      }
     }
     this.write.struct('};\n')
   }
@@ -93,9 +97,11 @@ export class CppHeaderBuilder {
     this.write.template('template<>')
     this.write.template(`struct ${structName}<${templateType}> {`)
     for (const field of fields) {
-      'itemType' in field
-        ? this.addStructArrayKey(field, 'template')
-        : this.addStructKey(field, 'template')
+      if ('itemType' in field) {
+        this.addStructArrayKey(field, 'template')
+      } else {
+        this.addStructKey(field, 'template')
+      }
     }
     this.write.template('};\n')
   }

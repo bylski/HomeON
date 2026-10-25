@@ -1,9 +1,9 @@
 import {
-  CommandMetadata,
+  type CommandMetadata,
   type ComponentCommandEvent,
-  ComponentConfig,
-  DeviceDiscoveryEvent,
-  MetricMetadata,
+  type ComponentConfig,
+  type DeviceDiscoveryEvent,
+  type MetricMetadata,
   type ComponentTelemetryEvent,
 } from '@home-on/generated/events'
 import { z } from 'zod'

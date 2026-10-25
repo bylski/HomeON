@@ -32,7 +32,7 @@ export type DbQueryWith<
 export type DbQueryResult<
   TRelations extends AnyRelations,
   TTable extends keyof TRelations,
-  TWith extends DbQueryWith<TRelations, TTable> = {},
+  TWith extends DbQueryWith<TRelations, TTable> = Record<never, never>,
 > = BuildQueryResult<TRelations, TRelations[TTable], { with: TWith }>
 
 export const prepareUpdateOnConflictSet = <
@@ -43,7 +43,7 @@ export const prepareUpdateOnConflictSet = <
   row: TKeyFlags,
 ) => {
   const columns = getColumns(table)
-  const set: Record<keyof TKeyFlags, SQL> = {} as any
+  const set = {} as Record<keyof TKeyFlags, SQL>
   for (const [key, shouldApply] of Object.entries(row)) {
     // set only needed fields and discard primary keys
     if (!shouldApply || columns[key as keyof typeof columns].primary) {

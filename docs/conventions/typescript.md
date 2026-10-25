@@ -15,6 +15,8 @@
   ```ts
   type Device = { id: string; name: string }
   ```
+  Exception: generated code (`generated/events.ts`) keeps the `interface`s that
+  json-schema-to-typescript produces. It's never edited by hand and is excluded from ESLint.
 - Use `import type { ... }` for imports that are only types.
 - Use arrow functions, not function declarations:
   ```ts

@@ -1,8 +1,8 @@
-import { CppHeaderBuilder, StructKey } from '../../helpers/cppHeaderBuilder'
+import { type CppHeaderBuilder, type StructKey } from '../../helpers/cppHeaderBuilder'
 import { execSync } from 'node:child_process'
 import fs from 'node:fs'
 import {
-  EventSchema,
+  type EventSchema,
   extractRefSchemaName,
   getRefSchema,
   isArraySchemaProperty,

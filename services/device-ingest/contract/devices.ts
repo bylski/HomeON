@@ -1,4 +1,4 @@
-export interface CommandMetadataDTO {
+export type CommandMetadataDTO = {
   id: number
   commandId: string
   componentId: string
@@ -12,7 +12,7 @@ export interface CommandMetadataDTO {
   description?: string
 }
 
-export interface MetricMetadataDTO {
+export type MetricMetadataDTO = {
   id: number
   metricId: string
   componentId: string
@@ -24,7 +24,7 @@ export interface MetricMetadataDTO {
   maxValue?: string
 }
 
-export interface FullComponentDTO {
+export type FullComponentDTO = {
   id: number
   componentId: string
   deviceId: string
@@ -34,7 +34,7 @@ export interface FullComponentDTO {
   commandsMetadata: CommandMetadataDTO[]
 }
 
-export interface FullDeviceDTO {
+export type FullDeviceDTO = {
   id: string
   name: string
   components: FullComponentDTO[]

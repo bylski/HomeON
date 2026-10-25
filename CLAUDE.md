@@ -14,8 +14,9 @@ The key rules:
   `pnpm generate-configs`. Never edit `generated/events.ts` or `firmware/lib/Mqtt/Events.h` by hand.
 - **Topics:** `home-on/v1/<event-type>/<device_id>[/<component_id>[/<command>]]`. Discovery is
   retained, telemetry uses QoS 0, commands use QoS 1 and must be idempotent.
-- **Backend layers:** `index` -> `handlers` -> `services` -> `repository` -> `db`. Only
-  repositories use Drizzle, and they return DTOs from `contract/` via mappers.
+- **Backend layers:** `index` -> `handlers` -> `services` -> `repository` -> `db`, never
+  skipping a layer (pass-through services are expected). Only repositories use Drizzle, and they
+  return DTOs from `contract/` via mappers.
 - **TypeScript:** ESM with `.js` import extensions, `type` instead of `interface`, arrow
   functions, camelCase file names, Prettier formatting. Log through `buildLogger('[Ctx]')`, never
   `console.*`.
@@ -25,6 +26,10 @@ The key rules:
 
 ## Commands
 
+- `pnpm lint`: run every check (ESLint, Prettier, clang-format, typecheck). It must pass before
+  finishing a task.
+- `pnpm format`: auto-fix formatting and fixable lint errors
+- `pnpm check:codegen`: verify generated files match the schemas
 - `pnpm generate-configs`: regenerate C++ and TS event types from the JSON schemas
 - `pnpm upload <env>`: build and flash firmware for a PlatformIO env
 - `services/device-ingest`: `pnpm dev` (watch mode) / `pnpm build` / `pnpm start`

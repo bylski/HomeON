@@ -1,8 +1,8 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-import { CppHeaderBuilder, StructKey } from '../../helpers/cppHeaderBuilder'
-import { EventSchema } from '../../helpers/jsonSchema'
+import { CppHeaderBuilder } from '../../helpers/cppHeaderBuilder'
+import { type EventSchema } from '../../helpers/jsonSchema'
 import { buildCppHeaderFile, generateCppHeaderFile } from './cppHelpers'
 import { buildTsFile, generateTsFile } from './tsHelpers'
 

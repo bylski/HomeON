@@ -2,7 +2,7 @@ import { useState } from 'react'
 
 const stateToOnOff = (state: boolean) => (state ? 'on' : 'off')
 
-function App() {
+const App = () => {
   const [ledState, toggleLedState] = useState<boolean>(false)
 
   const ledSwitchHandler = async () => {

@@ -6,6 +6,7 @@ export type EventSchema = {
   additionalProperties: boolean
   properties: SchemaProperties
   ['x-topic-prefix']?: string
+  definitions?: Record<string, EventSchema>
 }
 
 export const SCHEMA_PRIMITVE_TYPES = ['integer', 'number', 'string', 'boolean'] as const
@@ -29,7 +30,7 @@ type ArraySchemaProperty = {
   items: SchemaProperty
 }
 
-type FallbackSchemaProperty = { [K in SchemaPropertyWithFallback]: any }
+type FallbackSchemaProperty = { [K in SchemaPropertyWithFallback]: unknown }
 
 export type SchemaProperty = BaseSchemaProperty &
   (PrimitiveSchemaProperty | ArraySchemaProperty | RefSchemaProperty | FallbackSchemaProperty)
@@ -54,4 +55,10 @@ export const isFallbackSchemaProperty = (
 
 export const extractRefSchemaName = (ref: SchemaRefString): string => ref.split('/').at(-1)!
 
-export const getRefSchema = (rootSchema: any, ref: string) => rootSchema.definitions[ref]
+export const getRefSchema = (rootSchema: EventSchema, ref: string): EventSchema => {
+  const refSchema = rootSchema.definitions?.[ref]
+  if (!refSchema) {
+    throw new Error(`Schema "${rootSchema.title}" has no definition for $ref "${ref}"`)
+  }
+  return refSchema
+}
