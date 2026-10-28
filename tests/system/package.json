@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "@home-on/generated": "workspace:*",
+    "@home-on/logger": "workspace:*",
     "@home-on/virtual-device": "workspace:*"
   },
   "devDependencies": {

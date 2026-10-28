@@ -1,6 +1,6 @@
 # system test stack: compose.yml plus the infrastructure device-ingest needs, with test
-# credentials. Started by the system tests under its own project name, and on other host ports
-# than the dev stack, so both can run side by side.
+# credentials. Started by the system tests under its own project name, on host ports docker picks
+# freely (the tests look them up), so it never clashes with the dev stack or anything else.
 services:
   device-ingest:
     # migrations are applied here only; production deployments run `pnpm db:migrate` themselves
@@ -19,7 +19,7 @@ services:
       ENV_MQTT_USERNAME: test
       ENV_MQTT_PASSWORD: test
     ports: !override
-      - '13000:3000'
+      - '3000'
     depends_on:
       postgres:
         condition: service_healthy
@@ -50,4 +50,4 @@ services:
     volumes:
       - ./tests/system/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
     ports:
-      - '11883:1883'
+      - '1883'

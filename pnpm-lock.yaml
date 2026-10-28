@@ -301,6 +301,9 @@ importers:
       '@home-on/generated':
         specifier: workspace:*
         version: link:../../generated
+      '@home-on/logger':
+        specifier: workspace:*
+        version: link:../../libs/logger
       '@home-on/virtual-device':
         specifier: workspace:*
         version: link:../../libs/virtual-device

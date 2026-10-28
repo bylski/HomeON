@@ -1,14 +1,13 @@
 import { performance } from 'node:perf_hooks'
 import { createVirtualDevice, firmwareDiscovery, type VirtualDevice } from '@home-on/virtual-device'
-import { afterEach, describe, expect, it, vi } from 'vitest'
+import { afterEach, describe, expect, inject, it, vi } from 'vitest'
 import type { FullDeviceDTO } from '../../services/device-ingest/contract/devices.js'
 
 // only what the in-process integration tests can't cover: the shipped images and compose wiring,
 // and requirements measured on the running system (docs/conventions/testing.md)
 
-// host ports of the system test stack (compose.system.yml)
-const API_URL = 'http://localhost:13000'
-const BROKER_URL = 'mqtt://localhost:11883'
+// docker picks the host ports when the stack starts
+const { apiUrl: API_URL, brokerUrl: BROKER_URL } = inject('systemStack')
 
 // non-functional requirement: input lag must not exceed 5 seconds (docs/goals.md)
 const MAX_LATENCY_MS = 5000
