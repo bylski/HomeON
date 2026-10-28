@@ -1,144 +1,115 @@
 # Testing
 
+This file holds the decisions and rules. How each piece is wired up is documented in the code
+itself; start from `vitest.config.mts` and the `test*` scripts in `package.json`.
+
 ## Test layers
 
-| Layer       | What's real                                    | What's faked                             | Example                                                        |
-| ----------- | ---------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------- |
-| unit        | one function or module                         | everything below it (`vi.mock`)          | a service maps a discovery event to rows, repository mocked    |
-| contract    | JSON schemas, Zod schemas, C++ JSON converters | everything else                          | a C++ `DeviceDiscoveryEvent` serializes to JSON Zod accepts    |
-| integration | one service + real Postgres and Mosquitto      | devices, other services, frontend        | a retained discovery event ends up in `GET /discovery/devices` |
-| system      | the shipped compose stack (built images)       | ESP devices (replaced by virtual device) | the image starts and a device is listed within 5 s             |
-| firmware    | plain C++ logic from `firmware/lib/`           | nothing (Arduino code isn't compiled)    | topic building, a device payload matches its snapshot          |
-| e2e         | everything, from device to browser             | ESP devices (replaced by virtual device) | planned with the UI: a reading appears on the dashboard        |
+| Layer       | What's real                                | What's faked                           | Example                                             | Run with                |
+| ----------- | ------------------------------------------ | -------------------------------------- | --------------------------------------------------- | ----------------------- |
+| unit        | one function or module                     | the layer below it                     | a service maps an event to rows, repository mocked  | `pnpm test`             |
+| contract    | JSON schemas, Zod schemas, firmware output | everything else                        | both validators accept what the firmware sends      | `pnpm test`             |
+| firmware    | plain C++ logic from `firmware/lib/`       | nothing (Arduino code isn't compiled)  | a device's payload matches its snapshot             | `pnpm test:firmware`    |
+| integration | one service + real database and broker     | devices, other services, frontend      | a discovery event ends up in the REST API           | `pnpm test:integration` |
+| system      | the shipped compose stack (built images)   | devices (replaced by a virtual device) | the stack starts and meets the latency requirement  | `pnpm test:system`      |
+| e2e         | everything, from device to browser         | devices (replaced by a virtual device) | planned with the UI: a reading shows on a dashboard | —                       |
+
+`pnpm test` runs the fast layers that need no Docker. `pnpm test:all` runs every Vitest layer.
+Integration and system tests need Docker running; firmware tests need PlatformIO.
 
 **Integration vs system:** both cover one service with its infrastructure. Integration tests run
 the service code in-process and test its behaviour in detail. System tests run what is deployed
-(Docker images, compose config, migrations in the container) as a black box, and only check what
-integration tests can't: that the shipped stack works, and requirements measured on it (latency).
-A behaviour test belongs in integration. **E2E** is reserved for flows that end where the user
-sees them, so it starts with the frontend.
+(images, compose config, migrations in the container) as a black box, and only check what
+integration tests can't: that the shipped stack works, and requirements measured on it. A
+behaviour test belongs in integration. **E2E** is reserved for flows that end where the user sees
+them, so it starts with the frontend.
 
 ## Tools
 
-| Purpose                          | Tool                                                       |
-| -------------------------------- | ---------------------------------------------------------- |
-| TS test runner                   | Vitest, configured once in the root `vitest.config.mts`    |
-| Postgres / MQTT in tests         | Testcontainers (`postgres`, `eclipse-mosquitto` images)    |
-| JSON schema validation           | ajv (contract tests)                                       |
-| system test stack                | Docker Compose with a `compose.system.yml` override        |
-| C++ tests                        | GoogleTest in the PlatformIO `native` env (runs on the PC) |
-| browser tests (when UI has data) | Playwright                                                 |
-
-Integration and system tests need Docker Desktop running. Unit, contract and firmware tests need
-nothing.
+| Purpose                          | Tool                                      |
+| -------------------------------- | ----------------------------------------- |
+| TS test runner                   | Vitest, one root config for all packages  |
+| database / broker in tests       | Testcontainers                            |
+| JSON schema validation           | ajv                                       |
+| system test stack                | Docker Compose, with a test override file |
+| C++ tests                        | GoogleTest in the PlatformIO `native` env |
+| browser tests (once a UI exists) | Playwright                                |
 
 ## Where test files go
 
-- **Unit tests** sit next to the file they test, named `<file>.test.ts`:
-  `src/mqtt/helpers.ts` -> `src/mqtt/helpers.test.ts`.
-- **Integration tests** live in `services/<svc>/tests/integration/` and are named
-  `<feature>.int.test.ts`, so slow tests are obvious from the path. Shared setup (containers,
-  migrations) goes in `services/<svc>/tests/setup/`.
-- **Contract tests and fixtures** live in `tests/contract/` at the repo root, since they cover both
-  firmware and services.
-- **System tests** live in `tests/system/` and are named `<area>.system.test.ts`.
-- **E2E tests** will live in `e2e/` at the repo root.
+- **Unit tests** sit next to the file they test: `<file>.test.ts` beside `<file>.ts`.
+- **Integration tests** live in `services/<svc>/tests/integration/` as `<feature>.int.test.ts`,
+  so slow tests are obvious from the path. Their shared setup goes in `services/<svc>/tests/setup/`.
+- **Contract tests** and their fixtures live in `tests/contract/`, since they cover firmware and
+  services.
+- **System tests** live in `tests/system/` as `<area>.system.test.ts`.
+- **E2E tests** will live in `e2e/`.
 - **Firmware tests** live in `firmware/test/`, and their snapshots in `firmware/test/snapshots/`.
-  The firmware is the only thing that writes them, so it owns them; the contract tests and the
-  virtual device read them from there.
+  The firmware is the only thing that writes the snapshots, so it owns them; everything else reads
+  them from there.
 
 ## Writing tests
 
 - Test behaviour through a module's exported functions, not its internals. A non-exported helper
   is tested through the function that uses it.
 - A unit test mocks only the layer **directly below** the one under test (a service test mocks the
-  repository, a handler test mocks the service). Mock with a factory,
-  `vi.mock('../repository/devices.js', () => ({ ... }))`, so the real module and its imports (db,
-  MQTT client) are never loaded.
+  repository, a handler test mocks the service). Mock it with a factory, so the real module and
+  its imports (db, MQTT client) are never loaded.
 - The backend layer import rules don't apply to test files, so a test can import the mocked module
   to check its calls.
-- Build payloads with the generated types (`DeviceDiscoveryEvent`, ...) so a schema change breaks
-  the tests at compile time instead of silently.
+- Build payloads with the generated event types, so a schema change breaks the tests at compile
+  time instead of silently.
 - Name tests after the behaviour, not the function: `'keeps metrics of every component'`, not
-  `'test extractDiscoveryDataToSave'`.
+  `'test mapComponents'`.
+- Wait for asynchronous results (MQTT, background handlers) by polling until a timeout, never with
+  fixed sleeps.
 
 ## Integration tests
 
-- `tests/setup/globalSetup.ts` starts Postgres and Mosquitto containers once per run, applies the
-  migrations and passes their addresses to the tests (`inject('testEnv')`).
-- `tests/setup/testEnv.ts` copies those addresses into `process.env` before any `src` module is
-  imported, and truncates every table before each test, so every test starts from an empty
+- Containers are started once per run and the migrations applied; every test starts from an empty
   database.
-- A test starts the real service with `start(0)` (a free port) and talks to it the way devices and
-  the frontend do: it publishes over MQTT and reads results over REST.
-- MQTT is asynchronous, so wait for results by polling with `vi.waitFor`, never with fixed sleeps.
-- Retained messages survive between tests on the broker. Clear every retained topic a test
-  publishes (publish an empty retained payload) in `afterEach`.
+- Tests talk to the service the way devices and the frontend do: they publish over MQTT and read
+  results over REST.
+- Retained messages outlive a test on the broker, so clean up every retained message a test
+  publishes.
 - Test files run one at a time because they share the database and broker.
 
 ## Contract tests
 
-- `tests/contract/events.test.ts` checks every payload in `tests/contract/fixtures/<event>/` against
-  the JSON schema (ajv) and the backend Zod schema. Files in `valid/` must be accepted by both,
-  files in `invalid/` rejected by both. Name an invalid fixture after what is wrong with it
-  (`negativeTimestamp.json`).
-- `firmware/test/snapshots/<event>/` holds JSON written by the firmware's real serialization code.
-  Both validators must accept it.
-- A new schema in `config/schemas/` fails the run until it is added to the test.
+- Every fixture must get the **same verdict** from the JSON schema and from the backend's Zod
+  schema: fixtures in `valid/` accepted by both, fixtures in `invalid/` rejected by both. Name an
+  invalid fixture after what is wrong with it (`negativeTimestamp.json`).
+- When a schema changes, add a valid and an invalid fixture for the change.
+- Every firmware snapshot must be accepted by both validators.
+- A new schema fails the run until it is added to the test.
 
 ## Firmware tests
 
-- `pnpm test:firmware` builds the tests in `firmware/test/` for the PC (PlatformIO `native` env,
-  GoogleTest) and runs them. No board is needed.
-- Only Arduino-free code can be tested: the `Events` library (generated structs, JSON converters,
-  `ToJson`, `BuildTopic`). Logic worth testing goes there as plain C++ (`std::string`), and the
-  Arduino-specific code (`Serial`, pins, WiFi, `PubSubClient`) stays a thin layer that calls it.
-- Snapshot tests serialize real device payloads (e.g. `devices/test_sensors/discovery.h`) and
-  compare them with `firmware/test/snapshots/`. When a payload changes on purpose, run
-  `pnpm test:firmware:update` and commit the updated snapshots; the contract tests then check
-  the new output against the schemas.
+- They run on the PC, no board needed. Only Arduino-free code can be compiled there, so logic
+  worth testing goes into plain C++ libraries, and Arduino-specific code (serial, pins, WiFi, the
+  MQTT client) stays a thin layer that calls it.
+- Snapshot tests serialize real device payloads and compare them with the committed snapshots.
+  When a payload changes on purpose, run `pnpm test:firmware:update`, review the diff and commit
+  it; the contract tests then check the new output against the schemas.
+- A snapshot records what the firmware sends, not what is correct. Review it like code.
 
 ## System tests
 
-- `tests/system/setup/globalSetup.ts` builds the real images and starts `compose.yml` +
-  `compose.system.yml` (Postgres, Mosquitto, test credentials) as the `homeon-system` project, on
-  host ports 13000 (API) and 11883 (broker), so it can run next to the dev stack. It is removed
-  after the run; set `SYSTEM_KEEP_STACK=1` to keep it for debugging.
 - Keep them few: a system test that only checks service behaviour duplicates an integration test.
-- Devices are replaced by the **virtual device** (`libs/virtual-device`), which publishes the same
-  topics, delivery rules and payloads as the firmware. Its default discovery payload is the
-  firmware's snapshot, so it sends exactly what `test_sensors` sends.
-- Every test uses a fresh device id and removes its retained announcement afterwards
-  (`device.forget()`), because the stack is shared by the whole run.
-- Requirements from [docs/goals.md](../goals.md) are tested here, e.g. a device must be listed
-  within 5 s of announcing itself.
+- The stack runs under its own project name and host ports, so it can run next to the dev stack.
+- Requirements from [docs/goals.md](../goals.md) are measured here, e.g. input latency.
+- The stack is shared by the whole run, so every test uses a fresh device id and cleans up its
+  retained messages.
 
 ## Virtual device
 
-`pnpm virtual-device [--broker mqtt://localhost:1883] [--device-id virtual_sensors]
-[--interval 1000] [--username u --password p]` fakes an ESP during development: it announces
-itself, sends random readings within each metric's range, and logs the commands it receives.
-
-## Commands
-
-| Command                     | What it runs                                          |
-| --------------------------- | ----------------------------------------------------- |
-| `pnpm test`                 | the fast tests (no Docker needed)                     |
-| `pnpm test:unit`            | only the unit tests                                   |
-| `pnpm test:integration`     | integration tests (needs Docker Desktop)              |
-| `pnpm test:all`             | every Vitest project                                  |
-| `pnpm test:firmware`        | firmware tests on the PC (needs PlatformIO)           |
-| `pnpm test:firmware:update` | firmware tests, rewriting the snapshots               |
-| `pnpm test:system`          | system tests against the shipped stack (needs Docker) |
-| `pnpm virtual-device`       | a fake ESP device for development                     |
-| `pnpm test:watch`           | Vitest in watch mode                                  |
+`libs/virtual-device` behaves like an ESP on MQTT: same topics, delivery rules and payloads as the
+firmware, with the firmware's own snapshot as its default discovery payload. System tests use it
+in place of real devices, and `pnpm virtual-device` runs it during development without hardware
+(`--help` lists the options).
 
 ## Where tests run
 
-- **Pre-commit hook:** the unit and contract tests that import a staged file (`vitest related`).
-- **CI (GitHub Actions, `.github/workflows/ci.yml`):** on every pull request and push to
-  `master`, one job per layer: lint + codegen check, unit + contract, firmware (native tests and
-  the real `test_sensors` build), integration, system.
+- **Pre-commit hook:** the fast tests related to the staged files.
+- **CI:** every layer, one job each, on pull requests and pushes to `master`.
 - **Claude Code hook:** lint only, no tests.
-- Not checked yet: an ARM image build for the Raspberry Pi. Add a `docker buildx` job for
-  `linux/arm64` or `linux/arm/v7` once the Pi's OS (64- or 32-bit) is known.

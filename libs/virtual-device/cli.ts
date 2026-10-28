@@ -2,8 +2,17 @@ import { parseArgs } from 'node:util'
 import { buildLogger } from '@home-on/logger/index'
 import { createVirtualDevice, firmwareDiscovery } from './index.js'
 
-// usage: pnpm virtual-device [--broker mqtt://localhost:1883] [--device-id virtual_sensors]
-//        [--interval 1000] [--username test --password password]
+const USAGE = `Fakes an ESP device on MQTT: announces the test_sensors discovery payload, sends random
+telemetry for every metric and logs the commands it receives.
+
+Usage: pnpm virtual-device [options]
+
+  --broker <url>        broker to connect to (default: mqtt://localhost:1883)
+  --device-id <id>      device id to announce (default: virtual_sensors)
+  --interval <ms>       time between telemetry rounds (default: 1000)
+  --username <name>     broker username
+  --password <pass>     broker password
+  -h, --help            show this help`
 
 const logger = buildLogger('[VIRTUAL DEVICE]')
 
@@ -14,6 +23,7 @@ const { values } = parseArgs({
     interval: { type: 'string', default: '1000' },
     username: { type: 'string' },
     password: { type: 'string' },
+    help: { type: 'boolean', short: 'h' },
   },
 })
 
@@ -25,6 +35,11 @@ const randomReading = (min = 0, max = 0) => {
 }
 
 const run = async () => {
+  if (values.help) {
+    logger.info(`\n${USAGE}`)
+    return
+  }
+
   const device = await createVirtualDevice({
     brokerUrl: values.broker,
     username: values.username,
