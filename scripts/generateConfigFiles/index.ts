@@ -10,7 +10,7 @@ const scriptDir = __dirname
 const configsDir = path.resolve(scriptDir, '../../config')
 const schemasDir = path.join(configsDir, '/schemas')
 
-const cppOutputPath = path.resolve(__dirname, '../../firmware/lib/Mqtt/Events.h')
+const cppOutputPath = path.resolve(__dirname, '../../firmware/lib/Events/Events.h')
 const tsOutputPath = path.resolve(__dirname, '../../generated/events.ts')
 
 const extractSchemaMeta = (schemaPath: string) => {

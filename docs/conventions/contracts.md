@@ -4,7 +4,7 @@
   an MQTT payload.
 - A schema declares its topic prefix with `x-topic-prefix`.
 - After **any** schema change, run `pnpm generate-configs`. It regenerates:
-  - `firmware/lib/Mqtt/Events.h` (C++ structs)
+  - `firmware/lib/Events/Events.h` (C++ structs)
   - `generated/events.ts` (TS types and `TOPIC_PREFIXES`)
 - Generated files are **never edited by hand**. Commit them together with the schema change.
 - Payloads are validated with zod at the boundary (`contract/validation.ts`) before any handler

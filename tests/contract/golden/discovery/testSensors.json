@@ -1,0 +1,69 @@
+{
+  "device_id": "test_sensors",
+  "name": "Test device",
+  "ip_address": "",
+  "components": [
+    {
+      "id": "ultrasonic_sensor",
+      "name": "Distance sensor",
+      "type": "SENSOR",
+      "metrics": [
+        {
+          "metric_id": "ultrasonic_distance",
+          "metric": "distance",
+          "name": "Ultrasonic sensor distance",
+          "unit": "cm",
+          "min_value": 0,
+          "max_value": 0
+        }
+      ],
+      "commands": []
+    },
+    {
+      "id": "monostable_switch",
+      "name": "Button",
+      "type": "SWITCH",
+      "metrics": [
+        {
+          "metric_id": "button_is_pressed",
+          "metric": "input_state",
+          "name": "State of button (pressed / not pressed)",
+          "unit": "",
+          "min_value": 0,
+          "max_value": 1
+        }
+      ],
+      "commands": []
+    },
+    {
+      "id": "red_led_diode",
+      "name": "Red led diode",
+      "type": "LIGHT",
+      "metrics": [
+        {
+          "metric_id": "led_state",
+          "metric": "output_state",
+          "name": "LED on/off status",
+          "unit": "",
+          "min_value": 0,
+          "max_value": 1
+        }
+      ],
+      "commands": [
+        {
+          "command_id": "switch_led",
+          "name": "Switch LED on/off",
+          "command": "SWITCH_LED",
+          "command_topic": "/red_led_diode/switch",
+          "allowed_values": [
+            "ON",
+            "OFF"
+          ],
+          "min_value": 0,
+          "max_value": 0,
+          "description": "Switches LED ON or OFF"
+        }
+      ]
+    }
+  ]
+}

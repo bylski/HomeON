@@ -14,7 +14,9 @@
     "test:unit": "vitest run --project unit",
     "test:watch": "vitest",
     "test:integration": "vitest run --project \"integration:*\"",
-    "test:all": "vitest run"
+    "test:all": "vitest run",
+    "test:firmware": "pio test --project-dir firmware -e native",
+    "test:firmware:update": "pio test --project-dir firmware -e native --program-arg --update-golden"
   },
   "devDependencies": {
     "@home-on/eslint-config": "workspace:*",

@@ -13,7 +13,8 @@ export type StructKey = {
 )
 
 export class CppHeaderBuilder {
-  private includes = new Set<string>(['Arduino.h', 'ArduinoJson.h', 'vector', 'variant'])
+  // plain C++ only, so the events compile and are tested on a PC too (docs/conventions/testing.md)
+  private includes = new Set<string>(['cstdint', 'string', 'string_view', 'variant', 'vector'])
 
   private headerBlocks: string[] = []
   private structBlocks: string[] = []
@@ -39,8 +40,8 @@ export class CppHeaderBuilder {
     if (type === 'integer') return 'int64_t'
     if (type === 'number') return 'double'
     if (type === 'boolean') return 'bool'
-    if (type === 'string') return 'String'
-    if (type === 'variant') return 'std::variant<int, double, bool, String>'
+    if (type === 'string') return 'std::string'
+    if (type === 'variant') return 'std::variant<int, double, bool, std::string>'
     return type
   }
 
@@ -76,6 +77,10 @@ export class CppHeaderBuilder {
     )
   }
 
+  // fixme: optional schema fields become plain members, so firmware always sends them with a
+  // default value (`max_value: 0`, `ip_address: ""`, `timestamp: 0`) instead of leaving them out,
+  // see tests/contract/golden/. Generating std::optional (and skipping it in the converters)
+  // would fix it.
   addStruct(name: string, fields: StructKey[]) {
     this.write.struct(`struct ${name} {`)
     for (const field of fields) {

@@ -4,6 +4,6 @@ export default {
   '*.{json,md,yml,yaml}': 'prettier --write',
   'firmware/**/*.{cpp,h}': 'tsx scripts/lintCpp.ts --fix',
   // a function so lint-staged doesn't append file names: the check always covers all schemas
-  '{config/schemas/*.json,generated/events.ts,firmware/lib/Mqtt/Events.h}': () =>
+  '{config/schemas/*.json,generated/events.ts,firmware/lib/Events/Events.h}': () =>
     'tsx scripts/checkCodegen.ts',
 }

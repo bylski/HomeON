@@ -11,7 +11,7 @@ Read the relevant files in [docs/conventions/](docs/conventions/README.md) befor
 The key rules:
 
 - **Contracts:** MQTT payloads are defined only in `config/schemas/*.json`. After any change run
-  `pnpm generate-configs`. Never edit `generated/events.ts` or `firmware/lib/Mqtt/Events.h` by hand.
+  `pnpm generate-configs`. Never edit `generated/events.ts` or `firmware/lib/Events/Events.h` by hand.
 - **Topics:** `home-on/v1/<event-type>/<device_id>[/<component_id>[/<command>]]`. Discovery is
   retained, telemetry uses QoS 0, commands use QoS 1 and must be idempotent.
 - **Backend layers:** `index` -> `handlers` -> `services` -> `repository` -> `db`, never
@@ -31,6 +31,7 @@ The key rules:
 - `pnpm test`: run the fast tests. They must pass before finishing a task. When a change touches
   the database or MQTT handling, `pnpm test:integration` (needs Docker) must pass too. See
   [docs/conventions/testing.md](docs/conventions/testing.md).
+- `pnpm test:firmware`: firmware tests on the PC (run after firmware changes)
 - `pnpm format`: auto-fix formatting and fixable lint errors
 - `pnpm check:codegen`: verify generated files match the schemas
 - `pnpm generate-configs`: regenerate C++ and TS event types from the JSON schemas

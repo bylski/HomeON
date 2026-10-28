@@ -8,7 +8,7 @@
 | contract    | JSON schemas, Zod schemas, C++ JSON converters | everything else                          | a C++ `DeviceDiscoveryEvent` serializes to JSON Zod accepts    |
 | integration | one service + real Postgres and Mosquitto      | devices, other services, frontend        | a retained discovery event ends up in `GET /discovery/devices` |
 | e2e         | the whole compose stack, built images          | ESP devices (replaced by virtual device) | a virtual device announces itself and appears within 5 s       |
-| firmware    | plain C++ logic from `firmware/lib/`           | nothing (Arduino code isn't compiled)    | topic building, telemetry event built from a distance reading  |
+| firmware    | plain C++ logic from `firmware/lib/`           | nothing (Arduino code isn't compiled)    | topic building, a device payload matches its golden file       |
 
 ## Tools
 
@@ -75,15 +75,29 @@ nothing.
   Both validators must accept it.
 - A new schema in `config/schemas/` fails the run until it is added to the test.
 
+## Firmware tests
+
+- `pnpm test:firmware` builds the tests in `firmware/test/` for the PC (PlatformIO `native` env,
+  GoogleTest) and runs them. No board is needed.
+- Only Arduino-free code can be tested: the `Events` library (generated structs, JSON converters,
+  `ToJson`, `BuildTopic`). Logic worth testing goes there as plain C++ (`std::string`), and the
+  Arduino-specific code (`Serial`, pins, WiFi, `PubSubClient`) stays a thin layer that calls it.
+- Golden tests serialize real device payloads (e.g. `devices/test_sensors/discovery.h`) and
+  compare them with `tests/contract/golden/`. When a payload changes on purpose, run
+  `pnpm test:firmware:update` and commit the updated golden files; the contract tests then check
+  the new output against the schemas.
+
 ## Commands
 
-| Command                 | What it runs                             |
-| ----------------------- | ---------------------------------------- |
-| `pnpm test`             | the fast tests (no Docker needed)        |
-| `pnpm test:unit`        | only the unit tests                      |
-| `pnpm test:integration` | integration tests (needs Docker Desktop) |
-| `pnpm test:all`         | every Vitest project                     |
-| `pnpm test:watch`       | Vitest in watch mode                     |
+| Command                     | What it runs                                |
+| --------------------------- | ------------------------------------------- |
+| `pnpm test`                 | the fast tests (no Docker needed)           |
+| `pnpm test:unit`            | only the unit tests                         |
+| `pnpm test:integration`     | integration tests (needs Docker Desktop)    |
+| `pnpm test:all`             | every Vitest project                        |
+| `pnpm test:firmware`        | firmware tests on the PC (needs PlatformIO) |
+| `pnpm test:firmware:update` | firmware tests, rewriting the golden files  |
+| `pnpm test:watch`           | Vitest in watch mode                        |
 
 ## Where tests run
 
