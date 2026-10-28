@@ -33,8 +33,14 @@ MQTT topic structure and delivery rules, and frontend conventions (TBD).
 ## Where checks run
 
 - **Pre-commit hook** (husky, `.husky/pre-commit`): lint-staged (`.lintstagedrc.mjs`) runs ESLint,
-  Prettier and clang-format on staged files, plus the codegen check when a schema or generated
-  file is staged. Then `pnpm typecheck` runs. A failing check blocks the commit.
+  Prettier and clang-format on staged files, the unit and contract tests related to staged TS
+  files, plus the codegen check when a schema or generated file is staged. Then `pnpm typecheck`
+  runs. A failing check blocks the commit.
+- **CI** (`.github/workflows/ci.yml`): every check and test layer on pull requests and pushes to
+  `master` (see [testing.md](testing.md)). CI installs clang-format 22, the version used locally;
+  keep them on the same major version, since formatting rules change between versions.
+- **pnpm** is pinned with `packageManager` in the root `package.json`, so local installs, CI and
+  the Docker build (corepack) use the same version.
 - **Claude Code hook** (`.claude/settings.json` -> `scripts/claudeLintHook.ts`): after every file
   Claude edits, it auto-fixes and formats the file and reports remaining ESLint errors back to
   Claude, so AI-written code is fixed right away.

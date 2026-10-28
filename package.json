@@ -2,6 +2,7 @@
   "name": "homeon",
   "version": "1.0.0",
   "private": true,
+  "packageManager": "pnpm@12.3.4",
   "scripts": {
     "generate-configs": "npx tsx ./scripts/generateConfigFiles/index.ts",
     "upload": "pio run --project-dir firmware -t upload -e",

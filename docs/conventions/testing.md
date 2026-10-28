@@ -123,6 +123,10 @@ itself, sends random readings within each metric's range, and logs the commands 
 
 ## Where tests run
 
-- **Pre-commit hook:** planned: unit tests related to the staged files (`vitest related`).
-- **CI (GitHub Actions):** planned: every layer, one job per layer.
+- **Pre-commit hook:** the unit and contract tests that import a staged file (`vitest related`).
+- **CI (GitHub Actions, `.github/workflows/ci.yml`):** on every pull request and push to
+  `master`, one job per layer: lint + codegen check, unit + contract, firmware (native tests and
+  the real `test_sensors` build), integration, e2e.
 - **Claude Code hook:** lint only, no tests.
+- Not checked yet: an ARM image build for the Raspberry Pi. Add a `docker buildx` job for
+  `linux/arm64` or `linux/arm/v7` once the Pi's OS (64- or 32-bit) is known.
