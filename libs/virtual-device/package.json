@@ -1,0 +1,22 @@
+{
+  "name": "@home-on/virtual-device",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Behaves like an ESP device on MQTT, for e2e tests and for development without hardware.",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@home-on/generated": "workspace:*",
+    "@home-on/logger": "workspace:*",
+    "mqtt": "^5.16.1"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2"
+  }
+}

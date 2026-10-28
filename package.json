@@ -16,7 +16,9 @@
     "test:integration": "vitest run --project \"integration:*\"",
     "test:all": "vitest run",
     "test:firmware": "pio test --project-dir firmware -e native",
-    "test:firmware:update": "pio test --project-dir firmware -e native --program-arg --update-golden"
+    "test:firmware:update": "pio test --project-dir firmware -e native --program-arg --update-golden",
+    "virtual-device": "tsx libs/virtual-device/cli.ts",
+    "test:e2e": "vitest run --project e2e"
   },
   "devDependencies": {
     "@home-on/eslint-config": "workspace:*",

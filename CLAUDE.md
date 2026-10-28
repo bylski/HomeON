@@ -32,6 +32,8 @@ The key rules:
   the database or MQTT handling, `pnpm test:integration` (needs Docker) must pass too. See
   [docs/conventions/testing.md](docs/conventions/testing.md).
 - `pnpm test:firmware`: firmware tests on the PC (run after firmware changes)
+- `pnpm test:e2e`: e2e tests against the full compose stack (needs Docker)
+- `pnpm virtual-device`: fake ESP device on MQTT for development without hardware
 - `pnpm format`: auto-fix formatting and fixable lint errors
 - `pnpm check:codegen`: verify generated files match the schemas
 - `pnpm generate-configs`: regenerate C++ and TS event types from the JSON schemas

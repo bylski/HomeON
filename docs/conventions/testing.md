@@ -87,17 +87,39 @@ nothing.
   `pnpm test:firmware:update` and commit the updated golden files; the contract tests then check
   the new output against the schemas.
 
+## E2E tests
+
+- `e2e/setup/globalSetup.ts` builds the real images and starts `compose.yml` + `compose.e2e.yml`
+  (Postgres, Mosquitto, test credentials) as the `homeon-e2e` project, on host ports 13000 (API)
+  and 11883 (broker), so it can run next to the dev stack. It is removed after the run; set
+  `E2E_KEEP_STACK=1` to keep it for debugging.
+- Devices are replaced by the **virtual device** (`libs/virtual-device`), which publishes the same
+  topics, delivery rules and payloads as the firmware. Its default discovery payload is the
+  firmware's golden file, so it sends exactly what `test_sensors` sends.
+- Every test uses a fresh device id and removes its retained announcement afterwards
+  (`device.forget()`), because the stack is shared by the whole run.
+- Requirements from [docs/goals.md](../goals.md) are tested here, e.g. a device must be listed
+  within 5 s of announcing itself.
+
+## Virtual device
+
+`pnpm virtual-device [--broker mqtt://localhost:1883] [--device-id virtual_sensors]
+[--interval 1000] [--username u --password p]` fakes an ESP during development: it announces
+itself, sends random readings within each metric's range, and logs the commands it receives.
+
 ## Commands
 
-| Command                     | What it runs                                |
-| --------------------------- | ------------------------------------------- |
-| `pnpm test`                 | the fast tests (no Docker needed)           |
-| `pnpm test:unit`            | only the unit tests                         |
-| `pnpm test:integration`     | integration tests (needs Docker Desktop)    |
-| `pnpm test:all`             | every Vitest project                        |
-| `pnpm test:firmware`        | firmware tests on the PC (needs PlatformIO) |
-| `pnpm test:firmware:update` | firmware tests, rewriting the golden files  |
-| `pnpm test:watch`           | Vitest in watch mode                        |
+| Command                     | What it runs                                       |
+| --------------------------- | -------------------------------------------------- |
+| `pnpm test`                 | the fast tests (no Docker needed)                  |
+| `pnpm test:unit`            | only the unit tests                                |
+| `pnpm test:integration`     | integration tests (needs Docker Desktop)           |
+| `pnpm test:all`             | every Vitest project                               |
+| `pnpm test:firmware`        | firmware tests on the PC (needs PlatformIO)        |
+| `pnpm test:firmware:update` | firmware tests, rewriting the golden files         |
+| `pnpm test:e2e`             | e2e tests against the compose stack (needs Docker) |
+| `pnpm virtual-device`       | a fake ESP device for development                  |
+| `pnpm test:watch`           | Vitest in watch mode                               |
 
 ## Where tests run
 

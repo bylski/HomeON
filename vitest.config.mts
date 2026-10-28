@@ -32,6 +32,17 @@ export default defineConfig({
           hookTimeout: 30_000,
         },
       },
+      {
+        test: {
+          name: 'e2e',
+          root: 'e2e',
+          include: ['**/*.e2e.test.ts'],
+          globalSetup: ['setup/globalSetup.ts'],
+          // one stack for the whole run
+          fileParallelism: false,
+          testTimeout: 30_000,
+        },
+      },
     ],
   },
 })
