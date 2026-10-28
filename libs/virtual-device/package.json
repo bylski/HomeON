@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "Behaves like an ESP device on MQTT, for e2e tests and for development without hardware.",
+  "description": "Behaves like an ESP device on MQTT, for system tests and for development without hardware.",
   "exports": {
     ".": "./index.ts"
   },

@@ -68,10 +68,6 @@ export const createVirtualDevice = async ({
         qos: 0,
       }),
 
-    /** sends a raw payload under the device's telemetry topic, e.g. to test invalid input */
-    sendRaw: (componentId: string, payload: string) =>
-      client.publishAsync(`home-on/v1/telemetry/${deviceId}/${componentId}`, payload, { qos: 0 }),
-
     /** commands use QoS 1, so the handler may run twice for one command (they are idempotent) */
     onCommand: async (componentId: string, command: string, handler: CommandHandler) => {
       const topic = `home-on/v1/commands/${deviceId}/${componentId}/${command}`

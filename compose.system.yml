@@ -1,6 +1,6 @@
-# e2e stack: compose.yml plus the infrastructure device-ingest needs, with test credentials.
-# Started by e2e/setup/globalSetup.ts (`pnpm test:e2e`) under its own project name, and on other
-# host ports than the dev stack, so both can run side by side.
+# system test stack: compose.yml plus the infrastructure device-ingest needs, with test
+# credentials. Started by tests/system/setup/globalSetup.ts (`pnpm test:system`) under its own
+# project name, and on other host ports than the dev stack, so both can run side by side.
 services:
   device-ingest:
     # migrations are applied here only; production deployments run `pnpm db:migrate` themselves
@@ -48,6 +48,6 @@ services:
   mosquitto:
     image: eclipse-mosquitto:2
     volumes:
-      - ./e2e/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+      - ./tests/system/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
     ports:
       - '11883:1883'

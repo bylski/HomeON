@@ -1,9 +1,9 @@
 {
-  "name": "@home-on/e2e",
+  "name": "@home-on/system-tests",
   "version": "1.0.0",
   "private": true,
   "type": "module",
-  "description": "End-to-end tests against the full Docker Compose stack.",
+  "description": "Black-box tests against the shipped Docker Compose stack.",
   "scripts": {
     "typecheck": "tsc --noEmit -p ."
   },

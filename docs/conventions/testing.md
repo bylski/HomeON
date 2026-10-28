@@ -7,8 +7,16 @@
 | unit        | one function or module                         | everything below it (`vi.mock`)          | a service maps a discovery event to rows, repository mocked    |
 | contract    | JSON schemas, Zod schemas, C++ JSON converters | everything else                          | a C++ `DeviceDiscoveryEvent` serializes to JSON Zod accepts    |
 | integration | one service + real Postgres and Mosquitto      | devices, other services, frontend        | a retained discovery event ends up in `GET /discovery/devices` |
-| e2e         | the whole compose stack, built images          | ESP devices (replaced by virtual device) | a virtual device announces itself and appears within 5 s       |
+| system      | the shipped compose stack (built images)       | ESP devices (replaced by virtual device) | the image starts and a device is listed within 5 s             |
 | firmware    | plain C++ logic from `firmware/lib/`           | nothing (Arduino code isn't compiled)    | topic building, a device payload matches its golden file       |
+| e2e         | everything, from device to browser             | ESP devices (replaced by virtual device) | planned with the UI: a reading appears on the dashboard        |
+
+**Integration vs system:** both cover one service with its infrastructure. Integration tests run
+the service code in-process and test its behaviour in detail. System tests run what is deployed
+(Docker images, compose config, migrations in the container) as a black box, and only check what
+integration tests can't: that the shipped stack works, and requirements measured on it (latency).
+A behaviour test belongs in integration. **E2E** is reserved for flows that end where the user
+sees them, so it starts with the frontend.
 
 ## Tools
 
@@ -17,11 +25,11 @@
 | TS test runner                   | Vitest, configured once in the root `vitest.config.mts`    |
 | Postgres / MQTT in tests         | Testcontainers (`postgres`, `eclipse-mosquitto` images)    |
 | JSON schema validation           | ajv (contract tests)                                       |
-| E2E stack                        | Docker Compose with a `compose.e2e.yml` override           |
+| system test stack                | Docker Compose with a `compose.system.yml` override        |
 | C++ tests                        | GoogleTest in the PlatformIO `native` env (runs on the PC) |
 | browser tests (when UI has data) | Playwright                                                 |
 
-Integration and e2e tests need Docker Desktop running. Unit, contract and firmware tests need
+Integration and system tests need Docker Desktop running. Unit, contract and firmware tests need
 nothing.
 
 ## Where test files go
@@ -33,7 +41,8 @@ nothing.
   migrations) goes in `services/<svc>/tests/setup/`.
 - **Contract tests and fixtures** live in `tests/contract/` at the repo root, since they cover both
   firmware and services.
-- **E2E tests** live in `e2e/` at the repo root, since they cover the whole system.
+- **System tests** live in `tests/system/` and are named `<area>.system.test.ts`.
+- **E2E tests** will live in `e2e/` at the repo root.
 - **Firmware tests** live in `firmware/test/`.
 
 ## Writing tests
@@ -87,12 +96,13 @@ nothing.
   `pnpm test:firmware:update` and commit the updated golden files; the contract tests then check
   the new output against the schemas.
 
-## E2E tests
+## System tests
 
-- `e2e/setup/globalSetup.ts` builds the real images and starts `compose.yml` + `compose.e2e.yml`
-  (Postgres, Mosquitto, test credentials) as the `homeon-e2e` project, on host ports 13000 (API)
-  and 11883 (broker), so it can run next to the dev stack. It is removed after the run; set
-  `E2E_KEEP_STACK=1` to keep it for debugging.
+- `tests/system/setup/globalSetup.ts` builds the real images and starts `compose.yml` +
+  `compose.system.yml` (Postgres, Mosquitto, test credentials) as the `homeon-system` project, on
+  host ports 13000 (API) and 11883 (broker), so it can run next to the dev stack. It is removed
+  after the run; set `SYSTEM_KEEP_STACK=1` to keep it for debugging.
+- Keep them few: a system test that only checks service behaviour duplicates an integration test.
 - Devices are replaced by the **virtual device** (`libs/virtual-device`), which publishes the same
   topics, delivery rules and payloads as the firmware. Its default discovery payload is the
   firmware's golden file, so it sends exactly what `test_sensors` sends.
@@ -109,24 +119,24 @@ itself, sends random readings within each metric's range, and logs the commands 
 
 ## Commands
 
-| Command                     | What it runs                                       |
-| --------------------------- | -------------------------------------------------- |
-| `pnpm test`                 | the fast tests (no Docker needed)                  |
-| `pnpm test:unit`            | only the unit tests                                |
-| `pnpm test:integration`     | integration tests (needs Docker Desktop)           |
-| `pnpm test:all`             | every Vitest project                               |
-| `pnpm test:firmware`        | firmware tests on the PC (needs PlatformIO)        |
-| `pnpm test:firmware:update` | firmware tests, rewriting the golden files         |
-| `pnpm test:e2e`             | e2e tests against the compose stack (needs Docker) |
-| `pnpm virtual-device`       | a fake ESP device for development                  |
-| `pnpm test:watch`           | Vitest in watch mode                               |
+| Command                     | What it runs                                          |
+| --------------------------- | ----------------------------------------------------- |
+| `pnpm test`                 | the fast tests (no Docker needed)                     |
+| `pnpm test:unit`            | only the unit tests                                   |
+| `pnpm test:integration`     | integration tests (needs Docker Desktop)              |
+| `pnpm test:all`             | every Vitest project                                  |
+| `pnpm test:firmware`        | firmware tests on the PC (needs PlatformIO)           |
+| `pnpm test:firmware:update` | firmware tests, rewriting the golden files            |
+| `pnpm test:system`          | system tests against the shipped stack (needs Docker) |
+| `pnpm virtual-device`       | a fake ESP device for development                     |
+| `pnpm test:watch`           | Vitest in watch mode                                  |
 
 ## Where tests run
 
 - **Pre-commit hook:** the unit and contract tests that import a staged file (`vitest related`).
 - **CI (GitHub Actions, `.github/workflows/ci.yml`):** on every pull request and push to
   `master`, one job per layer: lint + codegen check, unit + contract, firmware (native tests and
-  the real `test_sensors` build), integration, e2e.
+  the real `test_sensors` build), integration, system.
 - **Claude Code hook:** lint only, no tests.
 - Not checked yet: an ARM image build for the Raspberry Pi. Add a `docker buildx` job for
   `linux/arm64` or `linux/arm/v7` once the Pi's OS (64- or 32-bit) is known.

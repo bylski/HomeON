@@ -34,9 +34,9 @@ export default defineConfig({
       },
       {
         test: {
-          name: 'e2e',
-          root: 'e2e',
-          include: ['**/*.e2e.test.ts'],
+          name: 'system',
+          root: 'tests/system',
+          include: ['**/*.system.test.ts'],
           globalSetup: ['setup/globalSetup.ts'],
           // one stack for the whole run
           fileParallelism: false,
