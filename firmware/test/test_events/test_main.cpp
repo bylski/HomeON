@@ -23,7 +23,7 @@ namespace HomeOn {
 namespace {
 
 // pio test runs the binary from the firmware folder
-const std::string kSnapshotDir = "../tests/contract/snapshots/";
+const std::string kSnapshotDir = "test/snapshots/";
 
 // set by `--update-snapshots` (`pnpm test:firmware:update`)
 bool update_snapshots = false;

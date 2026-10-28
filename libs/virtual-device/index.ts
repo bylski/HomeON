@@ -20,7 +20,7 @@ type CommandHandler = (event: ComponentCommandEvent) => void
 
 /**
  * The discovery payload the real `test_sensors` firmware sends, read from the snapshot its
- * native tests keep up to date (tests/contract/snapshots), with the device id swapped.
+ * native tests keep up to date (firmware/test/snapshots), with the device id swapped.
  */
 export const firmwareDiscovery = (
   deviceId: string,
@@ -28,7 +28,7 @@ export const firmwareDiscovery = (
 ): DeviceDiscoveryEvent => {
   const snapshotPath = path.resolve(
     import.meta.dirname,
-    '../../tests/contract/snapshots/discovery/testSensors.json',
+    '../../firmware/test/snapshots/discovery/testSensors.json',
   )
   const snapshot = JSON.parse(fs.readFileSync(snapshotPath, 'utf-8')) as DeviceDiscoveryEvent
   return { ...snapshot, device_id: deviceId, name }

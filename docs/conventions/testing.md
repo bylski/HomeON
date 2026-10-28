@@ -43,7 +43,9 @@ nothing.
   firmware and services.
 - **System tests** live in `tests/system/` and are named `<area>.system.test.ts`.
 - **E2E tests** will live in `e2e/` at the repo root.
-- **Firmware tests** live in `firmware/test/`.
+- **Firmware tests** live in `firmware/test/`, and their snapshots in `firmware/test/snapshots/`.
+  The firmware is the only thing that writes them, so it owns them; the contract tests and the
+  virtual device read them from there.
 
 ## Writing tests
 
@@ -80,7 +82,7 @@ nothing.
   the JSON schema (ajv) and the backend Zod schema. Files in `valid/` must be accepted by both,
   files in `invalid/` rejected by both. Name an invalid fixture after what is wrong with it
   (`negativeTimestamp.json`).
-- `tests/contract/snapshots/<event>/` holds JSON written by the firmware's real serialization code.
+- `firmware/test/snapshots/<event>/` holds JSON written by the firmware's real serialization code.
   Both validators must accept it.
 - A new schema in `config/schemas/` fails the run until it is added to the test.
 
@@ -92,7 +94,7 @@ nothing.
   `ToJson`, `BuildTopic`). Logic worth testing goes there as plain C++ (`std::string`), and the
   Arduino-specific code (`Serial`, pins, WiFi, `PubSubClient`) stays a thin layer that calls it.
 - Snapshot tests serialize real device payloads (e.g. `devices/test_sensors/discovery.h`) and
-  compare them with `tests/contract/snapshots/`. When a payload changes on purpose, run
+  compare them with `firmware/test/snapshots/`. When a payload changes on purpose, run
   `pnpm test:firmware:update` and commit the updated snapshots; the contract tests then check
   the new output against the schemas.
 

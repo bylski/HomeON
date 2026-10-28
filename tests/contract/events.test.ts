@@ -51,7 +51,7 @@ for (const [event, { schemaFile, zodSchema }] of Object.entries(EVENTS)) {
     })
 
     const fixturesDir = path.join(import.meta.dirname, 'fixtures', event)
-    const snapshotsDir = path.join(import.meta.dirname, 'snapshots', event)
+    const snapshotsDir = path.join(ROOT, 'firmware/test/snapshots', event)
 
     it.each(readJsonFiles(path.join(fixturesDir, 'valid')))('accepts %s', (_file, payload) => {
       expect(verdicts(payload)).toEqual({ jsonSchema: 'accepted', zod: 'accepted' })
