@@ -11,6 +11,7 @@ convention changes, update the matching rule too (and the other way around).
 | `pnpm format`        | auto-fix: `eslint --fix`, `prettier --write`, `clang-format -i`            |
 | `pnpm typecheck`     | `tsc --noEmit` for the root (scripts, helpers) and every package           |
 | `pnpm check:codegen` | regenerates event types and fails if they differ from the working tree     |
+| `pnpm test`          | every Vitest project once (see [testing.md](testing.md))                   |
 
 ## What checks what
 

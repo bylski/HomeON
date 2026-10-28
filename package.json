@@ -9,7 +9,10 @@
     "format": "eslint . --fix && prettier --write . && tsx scripts/lintCpp.ts --fix",
     "typecheck": "tsc --noEmit -p . && pnpm -r typecheck",
     "check:codegen": "tsx scripts/checkCodegen.ts",
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "vitest run",
+    "test:unit": "vitest run --project unit",
+    "test:watch": "vitest"
   },
   "devDependencies": {
     "@home-on/eslint-config": "workspace:*",
@@ -18,7 +21,8 @@
     "husky": "^9.1.7",
     "lint-staged": "^17.6.0",
     "tsx": "^4.23.12",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vitest": "^5.0.5"
   },
   "dependencies": {
     "json-schema-to-typescript": "^15.0.4",
