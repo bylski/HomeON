@@ -18,4 +18,4 @@ RUN pnpm install --frozen-lockfile --ignore-scripts
 RUN pnpm --filter @home-on/device-ingest build
 
 USER node
-CMD ["node", "services/device-ingest/dist/src/app.js"]
+CMD ["node", "services/device-ingest/dist/src/main.js"]

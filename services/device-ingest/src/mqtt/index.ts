@@ -8,7 +8,7 @@ import { buildLogger } from '@home-on/logger/index'
 type OnEventCallback<TPrefix extends TopicPrefix> = (
   topic: string,
   payload: TopicPayload<TPrefix>,
-) => void
+) => void | Promise<void>
 
 /** callbacks of all prefixes share one map, so their payload types are erased to the union */
 type StoredCallback = OnEventCallback<TopicPrefix>
@@ -26,6 +26,20 @@ let client: mqtt.MqttClient
 const subscriptionsWithCallbacks: Map<string, StoredCallback[]> = new Map()
 
 const logger = buildLogger('[MQTT]')
+
+// an error escaping a callback would crash the whole service, so one faulty device or a db
+// hiccup must only cost that single message
+const runCallback = async (
+  callback: StoredCallback,
+  topic: string,
+  payload: TopicPayload<TopicPrefix>,
+) => {
+  try {
+    await callback(topic, payload)
+  } catch (e) {
+    logger.error(`Error while handling message for topic ${topic}: ${e}`)
+  }
+}
 
 export const setup = () => {
   const host = process.env.ENV_MQTT_HOST
@@ -64,7 +78,13 @@ export const setup = () => {
       logger.error(`Error during parsing message buffer for topic ${topic}, error: ${e}`)
       return
     }
-    const validPayload = validateBaseTopicEvent(topicPrefix, eventPayload)
+    let validPayload
+    try {
+      validPayload = validateBaseTopicEvent(topicPrefix, eventPayload)
+    } catch (e) {
+      logger.error(`Invalid payload for topic ${topic} - message not handled, error: ${e}`)
+      return
+    }
 
     const possiblySubscribedTopics: string[] = [
       topic,
@@ -78,7 +98,7 @@ export const setup = () => {
       }
       // if topic structure has registrated callbacks - call them
       for (const callback of subscriptionsWithCallbacks.get(topicToCheck) ?? []) {
-        callback(topic, validPayload)
+        void runCallback(callback, topic, validPayload)
       }
     }
   })
@@ -88,6 +108,12 @@ export const setup = () => {
       logger.info(`Topic failed with error: ${JSON.stringify(error, null, 2)}`)
     }
   })
+}
+
+/** Closes the broker connection and forgets all subscriptions, so `setup()` can run again. */
+export const disconnect = async () => {
+  subscriptionsWithCallbacks.clear()
+  await client?.endAsync()
 }
 
 export const onEvent = <TPrefix extends TopicPrefix>(

@@ -29,7 +29,20 @@ src/<module>/
 - Cross-cutting infrastructure (MQTT client, db instance, env config) lives at the service's
   `src/` root (`src/mqtt/`, `src/db/`), not inside feature modules.
 
+## Entry point
+
+A service starts in three steps, split so tests can use each one on its own:
+
+- `src/main.ts`: loads envs and calls `start()`. Nothing else imports it.
+- `src/server.ts`: `start(port)` connects MQTT, registers listeners, starts HTTP and returns
+  `stop()`.
+- `src/app.ts`: `createApp()` builds the Express app without side effects.
+
 ## Database (Drizzle + Postgres)
+
+- Schema changes go through migrations: after changing `src/db/schema/`, run `pnpm db:generate`
+  and commit the new folder in `drizzle/`. Never edit a committed migration; add a new one.
+  `pnpm db:migrate` applies pending migrations.
 
 - Table schemas live in `src/db/schema/<table>.ts`, one table per file, with relations in
   `src/db/relations/`.
