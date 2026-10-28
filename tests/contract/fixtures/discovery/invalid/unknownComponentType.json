@@ -1,0 +1,5 @@
+{
+  "device_id": "test_sensors",
+  "name": "Test device",
+  "components": [{ "id": "x", "name": "X", "type": "TOASTER" }]
+}

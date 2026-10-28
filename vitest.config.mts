@@ -15,6 +15,12 @@ export default defineConfig({
       },
       {
         test: {
+          name: 'contract',
+          include: ['tests/contract/**/*.test.ts'],
+        },
+      },
+      {
+        test: {
           name: 'integration:device-ingest',
           root: 'services/device-ingest',
           include: ['tests/integration/**/*.int.test.ts'],

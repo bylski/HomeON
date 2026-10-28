@@ -2,6 +2,7 @@ packages:
   - 'libs/*'
   - 'services/*'
   - 'generated'
+  - 'tests/*'
 allowBuilds:
   esbuild: true
   # optional native speed-ups of the Docker client used by testcontainers, not needed

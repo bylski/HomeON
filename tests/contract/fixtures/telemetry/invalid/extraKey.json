@@ -1,0 +1,1 @@
+{ "id": "ultrasonic_sensor", "metric": "distance", "value": 42, "device_id": "test_sensors" }

@@ -65,6 +65,16 @@ nothing.
   publishes (publish an empty retained payload) in `afterEach`.
 - Test files run one at a time because they share the database and broker.
 
+## Contract tests
+
+- `tests/contract/events.test.ts` checks every payload in `tests/contract/fixtures/<event>/` against
+  the JSON schema (ajv) and the backend Zod schema. Files in `valid/` must be accepted by both,
+  files in `invalid/` rejected by both. Name an invalid fixture after what is wrong with it
+  (`negativeTimestamp.json`).
+- `tests/contract/golden/<event>/` holds JSON written by the firmware's real serialization code.
+  Both validators must accept it.
+- A new schema in `config/schemas/` fails the run until it is added to the test.
+
 ## Commands
 
 | Command                 | What it runs                             |
