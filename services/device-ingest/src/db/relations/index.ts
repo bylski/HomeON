@@ -4,8 +4,6 @@ import { commandsMetadata } from '../schema/commandsMetadata.js'
 import { metricsMetadata } from '../schema/metricsMetadata.js'
 import { components } from '../schema/components.js'
 
-// component ids are only unique per device, so metadata always joins on (deviceId, componentId)
-// like its foreign key - joining on componentId alone mixes up devices sharing a component id
 export const relations = defineRelations(
   { devices, components, commandsMetadata, metricsMetadata },
   (r) => ({

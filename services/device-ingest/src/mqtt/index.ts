@@ -27,8 +27,6 @@ const subscriptionsWithCallbacks: Map<string, StoredCallback[]> = new Map()
 
 const logger = buildLogger('[MQTT]')
 
-// an error escaping a callback would crash the whole service, so one faulty device or a db
-// hiccup must only cost that single message
 const runCallback = async (
   callback: StoredCallback,
   topic: string,
