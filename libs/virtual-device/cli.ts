@@ -29,7 +29,8 @@ const { values } = parseArgs({
 
 /** a random reading inside the metric's range */
 const randomReading = (min = 0, max = 0) => {
-  // fixme: firmware sends max_value 0 for metrics without a maximum (see cppHeaderBuilder.ts)
+  // fixme: firmware sends max_value 0 for metrics without a maximum
+  // (see the fixme in the C++ codegen)
   const upper = max > min ? max : min + 200
   return Math.round(min + Math.random() * (upper - min))
 }

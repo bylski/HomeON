@@ -36,8 +36,8 @@ describe('the shipped stack', () => {
     expect(Array.isArray(await getDevices())).toBe(true)
   })
 
-  // a device sending exactly what the test_sensors firmware sends reaches the API through the
-  // real broker, so this also proves the MQTT wiring
+  // a device sending exactly what the reference device's firmware sends reaches the API through
+  // the real broker, so this also proves the MQTT wiring
   it(`lists a device within ${MAX_LATENCY_MS / 1000} s of it announcing itself`, async () => {
     const deviceId = `system_${Math.random().toString(36).slice(2, 8)}`
     const device = await createVirtualDevice({

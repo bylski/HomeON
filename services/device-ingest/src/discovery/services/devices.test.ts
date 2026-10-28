@@ -11,7 +11,7 @@ vi.mock('../repository/devices.js', () => ({
 
 const upsertMock = vi.mocked(upsertDiscoveredDevice)
 
-/** mirrors the test_sensors firmware: a sensor with a metric and a light with a command */
+/** mirrors the reference device's firmware: a sensor with a metric and a light with a command */
 const DISCOVERY_EVENT: DeviceDiscoveryEvent = {
   device_id: 'test_sensors',
   name: 'Test device',

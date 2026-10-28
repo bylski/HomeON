@@ -61,7 +61,7 @@ for (const [event, { schemaFile, zodSchema }] of Object.entries(EVENTS)) {
       expect(verdicts(payload)).toEqual({ jsonSchema: 'rejected', zod: 'rejected' })
     })
 
-    // written by the firmware native tests (firmware/test), see docs/conventions/testing.md
+    // written by the firmware tests, see docs/conventions/testing.md
     it.each(readJsonFiles(snapshotsDir))('accepts firmware output %s', (_file, payload) => {
       expect(verdicts(payload)).toEqual({ jsonSchema: 'accepted', zod: 'accepted' })
     })

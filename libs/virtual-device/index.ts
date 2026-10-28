@@ -20,7 +20,7 @@ type CommandHandler = (event: ComponentCommandEvent) => void
 
 /**
  * The discovery payload the real `test_sensors` firmware sends, read from the snapshot its
- * native tests keep up to date (firmware/test/snapshots), with the device id swapped.
+ * tests keep up to date, with the device id swapped.
  */
 export const firmwareDiscovery = (
   deviceId: string,
