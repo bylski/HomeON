@@ -1,0 +1,67 @@
+# Testing
+
+## Test layers
+
+| Layer       | What's real                                    | What's faked                             | Example                                                        |
+| ----------- | ---------------------------------------------- | ---------------------------------------- | -------------------------------------------------------------- |
+| unit        | one function or module                         | everything below it (`vi.mock`)          | a service maps a discovery event to rows, repository mocked    |
+| contract    | JSON schemas, Zod schemas, C++ JSON converters | everything else                          | a C++ `DeviceDiscoveryEvent` serializes to JSON Zod accepts    |
+| integration | one service + real Postgres and Mosquitto      | devices, other services, frontend        | a retained discovery event ends up in `GET /discovery/devices` |
+| e2e         | the whole compose stack, built images          | ESP devices (replaced by virtual device) | a virtual device announces itself and appears within 5 s       |
+| firmware    | plain C++ logic from `firmware/lib/`           | nothing (Arduino code isn't compiled)    | topic building, telemetry event built from a distance reading  |
+
+## Tools
+
+| Purpose                          | Tool                                                       |
+| -------------------------------- | ---------------------------------------------------------- |
+| TS test runner                   | Vitest, configured once in the root `vitest.config.mts`    |
+| Postgres / MQTT in tests         | Testcontainers (`postgres`, `eclipse-mosquitto` images)    |
+| JSON schema validation           | ajv (contract tests)                                       |
+| E2E stack                        | Docker Compose with a `compose.e2e.yml` override           |
+| C++ tests                        | GoogleTest in the PlatformIO `native` env (runs on the PC) |
+| browser tests (when UI has data) | Playwright                                                 |
+
+Integration and e2e tests need Docker Desktop running. Unit, contract and firmware tests need
+nothing.
+
+## Where test files go
+
+- **Unit tests** sit next to the file they test, named `<file>.test.ts`:
+  `src/mqtt/helpers.ts` -> `src/mqtt/helpers.test.ts`.
+- **Integration tests** live in `services/<svc>/tests/integration/` and are named
+  `<feature>.int.test.ts`, so slow tests are obvious from the path. Shared setup (containers,
+  migrations) goes in `services/<svc>/tests/setup/`.
+- **Contract tests and fixtures** live in `tests/contract/` at the repo root, since they cover both
+  firmware and services.
+- **E2E tests** live in `e2e/` at the repo root, since they cover the whole system.
+- **Firmware tests** live in `firmware/test/`.
+
+## Writing tests
+
+- Test behaviour through a module's exported functions, not its internals. A non-exported helper
+  is tested through the function that uses it.
+- A unit test mocks only the layer **directly below** the one under test (a service test mocks the
+  repository, a handler test mocks the service). Mock with a factory,
+  `vi.mock('../repository/devices.js', () => ({ ... }))`, so the real module and its imports (db,
+  MQTT client) are never loaded.
+- The backend layer import rules don't apply to test files, so a test can import the mocked module
+  to check its calls.
+- Build payloads with the generated types (`DeviceDiscoveryEvent`, ...) so a schema change breaks
+  the tests at compile time instead of silently.
+- Integration tests start from an empty database: every table is truncated before each test.
+- Name tests after the behaviour, not the function: `'keeps metrics of every component'`, not
+  `'test extractDiscoveryDataToSave'`.
+
+## Commands
+
+| Command           | What it runs              |
+| ----------------- | ------------------------- |
+| `pnpm test`       | every Vitest project once |
+| `pnpm test:unit`  | only the unit tests       |
+| `pnpm test:watch` | Vitest in watch mode      |
+
+## Where tests run
+
+- **Pre-commit hook:** planned: unit tests related to the staged files (`vitest related`).
+- **CI (GitHub Actions):** planned: every layer, one job per layer.
+- **Claude Code hook:** lint only, no tests.

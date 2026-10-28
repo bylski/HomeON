@@ -109,6 +109,12 @@ export default defineConfig([
     },
   },
 
+  // tests import the mocked layer below to check its calls (see docs/conventions/testing.md)
+  {
+    files: ['**/*.test.ts', '**/tests/**'],
+    rules: { '@typescript-eslint/no-restricted-imports': 'off' },
+  },
+
   // frontend: conventions are TBD, keep the Vite scaffold rules and skip file naming for now
   {
     files: ['services/frontend/**/*.{ts,tsx}'],
