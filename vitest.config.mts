@@ -13,6 +13,19 @@ export default defineConfig({
           exclude: ['**/node_modules/**', '**/dist/**', '**/*.int.test.ts'],
         },
       },
+      {
+        test: {
+          name: 'integration:device-ingest',
+          root: 'services/device-ingest',
+          include: ['tests/integration/**/*.int.test.ts'],
+          globalSetup: ['tests/setup/globalSetup.ts'],
+          setupFiles: ['tests/setup/testEnv.ts'],
+          // all files share one database and broker, so they must not run at the same time
+          fileParallelism: false,
+          testTimeout: 15_000,
+          hookTimeout: 30_000,
+        },
+      },
     ],
   },
 })

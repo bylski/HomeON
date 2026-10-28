@@ -28,8 +28,9 @@ The key rules:
 
 - `pnpm lint`: run every check (ESLint, Prettier, clang-format, typecheck). It must pass before
   finishing a task.
-- `pnpm test`: run the Vitest tests (`pnpm test:unit` for unit tests only). Tests must pass
-  before finishing a task. See [docs/conventions/testing.md](docs/conventions/testing.md).
+- `pnpm test`: run the fast tests. They must pass before finishing a task. When a change touches
+  the database or MQTT handling, `pnpm test:integration` (needs Docker) must pass too. See
+  [docs/conventions/testing.md](docs/conventions/testing.md).
 - `pnpm format`: auto-fix formatting and fixable lint errors
 - `pnpm check:codegen`: verify generated files match the schemas
 - `pnpm generate-configs`: regenerate C++ and TS event types from the JSON schemas

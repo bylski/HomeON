@@ -10,9 +10,11 @@
     "typecheck": "tsc --noEmit -p . && pnpm -r typecheck",
     "check:codegen": "tsx scripts/checkCodegen.ts",
     "prepare": "husky",
-    "test": "vitest run",
+    "test": "vitest run --project unit",
     "test:unit": "vitest run --project unit",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "test:integration": "vitest run --project \"integration:*\"",
+    "test:all": "vitest run"
   },
   "devDependencies": {
     "@home-on/eslint-config": "workspace:*",

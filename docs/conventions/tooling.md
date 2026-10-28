@@ -5,13 +5,13 @@ convention changes, update the matching rule too (and the other way around).
 
 ## Commands
 
-| Command              | What it does                                                               |
-| -------------------- | -------------------------------------------------------------------------- |
-| `pnpm lint`          | ESLint, `prettier --check`, clang-format check and typecheck of everything |
-| `pnpm format`        | auto-fix: `eslint --fix`, `prettier --write`, `clang-format -i`            |
-| `pnpm typecheck`     | `tsc --noEmit` for the root (scripts, helpers) and every package           |
-| `pnpm check:codegen` | regenerates event types and fails if they differ from the working tree     |
-| `pnpm test`          | every Vitest project once (see [testing.md](testing.md))                   |
+| Command              | What it does                                                                  |
+| -------------------- | ----------------------------------------------------------------------------- |
+| `pnpm lint`          | ESLint, `prettier --check`, clang-format check and typecheck of everything    |
+| `pnpm format`        | auto-fix: `eslint --fix`, `prettier --write`, `clang-format -i`               |
+| `pnpm typecheck`     | `tsc --noEmit` for the root (scripts, helpers) and every package              |
+| `pnpm check:codegen` | regenerates event types and fails if they differ from the working tree        |
+| `pnpm test`          | the fast tests; `test:integration`, `test:all` (see [testing.md](testing.md)) |
 
 ## What checks what
 

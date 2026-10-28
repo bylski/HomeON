@@ -48,17 +48,32 @@ nothing.
   to check its calls.
 - Build payloads with the generated types (`DeviceDiscoveryEvent`, ...) so a schema change breaks
   the tests at compile time instead of silently.
-- Integration tests start from an empty database: every table is truncated before each test.
 - Name tests after the behaviour, not the function: `'keeps metrics of every component'`, not
   `'test extractDiscoveryDataToSave'`.
 
+## Integration tests
+
+- `tests/setup/globalSetup.ts` starts Postgres and Mosquitto containers once per run, applies the
+  migrations and passes their addresses to the tests (`inject('testEnv')`).
+- `tests/setup/testEnv.ts` copies those addresses into `process.env` before any `src` module is
+  imported, and truncates every table before each test, so every test starts from an empty
+  database.
+- A test starts the real service with `start(0)` (a free port) and talks to it the way devices and
+  the frontend do: it publishes over MQTT and reads results over REST.
+- MQTT is asynchronous, so wait for results by polling with `vi.waitFor`, never with fixed sleeps.
+- Retained messages survive between tests on the broker. Clear every retained topic a test
+  publishes (publish an empty retained payload) in `afterEach`.
+- Test files run one at a time because they share the database and broker.
+
 ## Commands
 
-| Command           | What it runs              |
-| ----------------- | ------------------------- |
-| `pnpm test`       | every Vitest project once |
-| `pnpm test:unit`  | only the unit tests       |
-| `pnpm test:watch` | Vitest in watch mode      |
+| Command                 | What it runs                             |
+| ----------------------- | ---------------------------------------- |
+| `pnpm test`             | the fast tests (no Docker needed)        |
+| `pnpm test:unit`        | only the unit tests                      |
+| `pnpm test:integration` | integration tests (needs Docker Desktop) |
+| `pnpm test:all`         | every Vitest project                     |
+| `pnpm test:watch`       | Vitest in watch mode                     |
 
 ## Where tests run
 
