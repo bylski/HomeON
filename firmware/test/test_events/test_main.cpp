@@ -2,6 +2,7 @@
 #include <MqttEvents.h>
 #include <gtest/gtest.h>
 
+#include <algorithm>
 #include <cstring>
 #include <fstream>
 #include <sstream>
@@ -44,10 +45,16 @@ void ExpectMatchesSnapshot(const std::string& json, const std::string& file) {
     if (update_snapshots) {
         JsonDocument doc;
         deserializeJson(doc, json);
-        std::ofstream out(path);
+        std::string pretty;
+        serializeJsonPretty(doc, pretty);
+        // ArduinoJson writes CRLF and a text-mode stream on Windows adds
+        // another CR, so drop them and write binary: snapshots always use LF
+        // (.gitattributes)
+        pretty.erase(std::remove(pretty.begin(), pretty.end(), '\r'),
+                     pretty.end());
+        std::ofstream out(path, std::ios::binary);
         ASSERT_TRUE(out) << "cannot write " << path;
-        serializeJsonPretty(doc, out);
-        out << '\n';
+        out << pretty << '\n';
         return;
     }
 
