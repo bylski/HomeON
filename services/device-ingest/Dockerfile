@@ -1,3 +1,6 @@
+# syntax=docker/dockerfile:1
+# a current Dockerfile frontend instead of the one built into the host's Docker: older engines
+# (e.g. on CI runners) don't know `COPY --parents`
 FROM node:24-slim
 RUN corepack enable
 
