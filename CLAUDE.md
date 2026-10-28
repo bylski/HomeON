@@ -23,6 +23,10 @@ The key rules:
 - **C++:** Google style (`.clang-format`). PascalCase types and functions, snake_case variables,
   `member_` suffix for private members, `kConstant`, everything in `namespace HomeOn`.
 - **Comments** explain why, not what. Mark known issues with `// fixme:`.
+- **Comments and docs should survive renames.** State the rule or reason rather than naming
+  files, functions, scripts, ports or devices that live elsewhere, and don't repeat a value that
+  is defined in code. Use judgement: a pointer to a doc or a root config file is a fine anchor,
+  and a concrete name is right when it is what the reader actually needs.
 
 ## Commands
 
