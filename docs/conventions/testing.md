@@ -8,7 +8,7 @@
 | contract    | JSON schemas, Zod schemas, C++ JSON converters | everything else                          | a C++ `DeviceDiscoveryEvent` serializes to JSON Zod accepts    |
 | integration | one service + real Postgres and Mosquitto      | devices, other services, frontend        | a retained discovery event ends up in `GET /discovery/devices` |
 | system      | the shipped compose stack (built images)       | ESP devices (replaced by virtual device) | the image starts and a device is listed within 5 s             |
-| firmware    | plain C++ logic from `firmware/lib/`           | nothing (Arduino code isn't compiled)    | topic building, a device payload matches its golden file       |
+| firmware    | plain C++ logic from `firmware/lib/`           | nothing (Arduino code isn't compiled)    | topic building, a device payload matches its snapshot          |
 | e2e         | everything, from device to browser             | ESP devices (replaced by virtual device) | planned with the UI: a reading appears on the dashboard        |
 
 **Integration vs system:** both cover one service with its infrastructure. Integration tests run
@@ -80,7 +80,7 @@ nothing.
   the JSON schema (ajv) and the backend Zod schema. Files in `valid/` must be accepted by both,
   files in `invalid/` rejected by both. Name an invalid fixture after what is wrong with it
   (`negativeTimestamp.json`).
-- `tests/contract/golden/<event>/` holds JSON written by the firmware's real serialization code.
+- `tests/contract/snapshots/<event>/` holds JSON written by the firmware's real serialization code.
   Both validators must accept it.
 - A new schema in `config/schemas/` fails the run until it is added to the test.
 
@@ -91,9 +91,9 @@ nothing.
 - Only Arduino-free code can be tested: the `Events` library (generated structs, JSON converters,
   `ToJson`, `BuildTopic`). Logic worth testing goes there as plain C++ (`std::string`), and the
   Arduino-specific code (`Serial`, pins, WiFi, `PubSubClient`) stays a thin layer that calls it.
-- Golden tests serialize real device payloads (e.g. `devices/test_sensors/discovery.h`) and
-  compare them with `tests/contract/golden/`. When a payload changes on purpose, run
-  `pnpm test:firmware:update` and commit the updated golden files; the contract tests then check
+- Snapshot tests serialize real device payloads (e.g. `devices/test_sensors/discovery.h`) and
+  compare them with `tests/contract/snapshots/`. When a payload changes on purpose, run
+  `pnpm test:firmware:update` and commit the updated snapshots; the contract tests then check
   the new output against the schemas.
 
 ## System tests
@@ -105,7 +105,7 @@ nothing.
 - Keep them few: a system test that only checks service behaviour duplicates an integration test.
 - Devices are replaced by the **virtual device** (`libs/virtual-device`), which publishes the same
   topics, delivery rules and payloads as the firmware. Its default discovery payload is the
-  firmware's golden file, so it sends exactly what `test_sensors` sends.
+  firmware's snapshot, so it sends exactly what `test_sensors` sends.
 - Every test uses a fresh device id and removes its retained announcement afterwards
   (`device.forget()`), because the stack is shared by the whole run.
 - Requirements from [docs/goals.md](../goals.md) are tested here, e.g. a device must be listed
@@ -126,7 +126,7 @@ itself, sends random readings within each metric's range, and logs the commands 
 | `pnpm test:integration`     | integration tests (needs Docker Desktop)              |
 | `pnpm test:all`             | every Vitest project                                  |
 | `pnpm test:firmware`        | firmware tests on the PC (needs PlatformIO)           |
-| `pnpm test:firmware:update` | firmware tests, rewriting the golden files            |
+| `pnpm test:firmware:update` | firmware tests, rewriting the snapshots               |
 | `pnpm test:system`          | system tests against the shipped stack (needs Docker) |
 | `pnpm virtual-device`       | a fake ESP device for development                     |
 | `pnpm test:watch`           | Vitest in watch mode                                  |

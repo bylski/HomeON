@@ -56,7 +56,7 @@ jobs:
           path: ~/.platformio
           key: platformio-${{ hashFiles('firmware/platformio.ini') }}
       - run: pip install platformio
-      # fails if the firmware's JSON output no longer matches tests/contract/golden
+      # fails if the firmware's JSON output no longer matches tests/contract/snapshots
       - run: pio test --project-dir firmware -e native
       # the device build needs its .env files; the example values are enough to compile
       - run: cp .env.shared.example .env.shared && cp firmware/.env.example firmware/.env

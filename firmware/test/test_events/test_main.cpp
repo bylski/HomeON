@@ -14,7 +14,7 @@
 #define ENV_MQTT_USERNAME "test"
 #define ENV_MQTT_PASSWORD "test"
 #define ENV_MQTT_HOST "localhost"
-// the real payloads of the device, so the golden files show exactly what it
+// the real payloads of the device, so the snapshots show exactly what it
 // sends
 #include "../../devices/test_sensors/discovery.h"
 
@@ -22,10 +22,10 @@ namespace HomeOn {
 namespace {
 
 // pio test runs the binary from the firmware folder
-const std::string kGoldenDir = "../tests/contract/golden/";
+const std::string kSnapshotDir = "../tests/contract/snapshots/";
 
-// set by `--update-golden` (`pnpm test:firmware:update`)
-bool update_golden = false;
+// set by `--update-snapshots` (`pnpm test:firmware:update`)
+bool update_snapshots = false;
 
 /** re-serializes JSON compactly, so formatting differences don't count */
 std::string Normalize(const std::string& json) {
@@ -36,12 +36,12 @@ std::string Normalize(const std::string& json) {
     return normalized;
 }
 
-/** Compares a payload with its committed golden file. With --update-golden
+/** Compares a payload with its committed snapshot. With --update-snapshots
  * it rewrites the file instead (see docs/conventions/testing.md). */
-void ExpectMatchesGolden(const std::string& json, const std::string& file) {
-    const std::string path = kGoldenDir + file;
+void ExpectMatchesSnapshot(const std::string& json, const std::string& file) {
+    const std::string path = kSnapshotDir + file;
 
-    if (update_golden) {
+    if (update_snapshots) {
         JsonDocument doc;
         deserializeJson(doc, json);
         std::ofstream out(path);
@@ -52,13 +52,13 @@ void ExpectMatchesGolden(const std::string& json, const std::string& file) {
     }
 
     std::ifstream in(path);
-    ASSERT_TRUE(in) << "missing golden file " << path
+    ASSERT_TRUE(in) << "missing snapshot " << path
                     << ", create it with `pnpm test:firmware:update`";
-    std::stringstream golden;
-    golden << in.rdbuf();
-    EXPECT_EQ(Normalize(json), Normalize(golden.str()))
+    std::stringstream snapshot;
+    snapshot << in.rdbuf();
+    EXPECT_EQ(Normalize(json), Normalize(snapshot.str()))
         << "firmware output changed: if intended, run "
-           "`pnpm test:firmware:update` and commit the golden file";
+           "`pnpm test:firmware:update` and commit the snapshot";
 }
 
 TEST(Topics, BuildsDiscoveryTopicWithoutSuffix) {
@@ -100,11 +100,12 @@ TEST(EventsJson, SerializesCommandStringValue) {
     EXPECT_EQ(doc["value"].as<std::string>(), "ON");
 }
 
-TEST(Golden, DiscoveryOfTestSensors) {
-    ExpectMatchesGolden(ToJson(kDiscoveryEvent), "discovery/testSensors.json");
+TEST(Snapshot, DiscoveryOfTestSensors) {
+    ExpectMatchesSnapshot(ToJson(kDiscoveryEvent),
+                          "discovery/testSensors.json");
 }
 
-TEST(Golden, UltrasonicTelemetry) {
+TEST(Snapshot, UltrasonicTelemetry) {
     // built the same way as in devices/test_sensors/main.cpp
     const ComponentTelemetryEvent event = {.id = kUltrasonicSensor.id,
                                            .metric = "distance",
@@ -112,14 +113,14 @@ TEST(Golden, UltrasonicTelemetry) {
                                            .unit = "cm",
                                            .state = "MEASURING"};
 
-    ExpectMatchesGolden(ToJson(event), "telemetry/ultrasonicDistance.json");
+    ExpectMatchesSnapshot(ToJson(event), "telemetry/ultrasonicDistance.json");
 }
 
-TEST(Golden, LedSwitchCommand) {
+TEST(Snapshot, LedSwitchCommand) {
     const ComponentCommandEvent event = {
         .timestamp = 1730000000, .command = "SWITCH_LED", .value = "ON"};
 
-    ExpectMatchesGolden(ToJson(event), "command/ledSwitchOn.json");
+    ExpectMatchesSnapshot(ToJson(event), "command/ledSwitchOn.json");
 }
 
 }  // namespace
@@ -128,8 +129,8 @@ TEST(Golden, LedSwitchCommand) {
 int main(int argc, char** argv) {
     ::testing::InitGoogleTest(&argc, argv);
     for (int i = 1; i < argc; i++) {
-        if (std::strcmp(argv[i], "--update-golden") == 0) {
-            HomeOn::update_golden = true;
+        if (std::strcmp(argv[i], "--update-snapshots") == 0) {
+            HomeOn::update_snapshots = true;
         }
     }
     return RUN_ALL_TESTS();

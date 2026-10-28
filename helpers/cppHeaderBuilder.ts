@@ -13,7 +13,7 @@ export type StructKey = {
 )
 
 export class CppHeaderBuilder {
-  // plain C++ only, so the events compile and are tested on a PC too (docs/conventions/testing.md)
+  // plain C++ only
   private includes = new Set<string>(['cstdint', 'string', 'string_view', 'variant', 'vector'])
 
   private headerBlocks: string[] = []
@@ -79,7 +79,7 @@ export class CppHeaderBuilder {
 
   // fixme: optional schema fields become plain members, so firmware always sends them with a
   // default value (`max_value: 0`, `ip_address: ""`, `timestamp: 0`) instead of leaving them out,
-  // see tests/contract/golden/. Generating std::optional (and skipping it in the converters)
+  // see tests/contract/snapshots/. Generating std::optional (and skipping it in the converters)
   // would fix it.
   addStruct(name: string, fields: StructKey[]) {
     this.write.struct(`struct ${name} {`)

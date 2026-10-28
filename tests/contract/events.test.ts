@@ -51,7 +51,7 @@ for (const [event, { schemaFile, zodSchema }] of Object.entries(EVENTS)) {
     })
 
     const fixturesDir = path.join(import.meta.dirname, 'fixtures', event)
-    const goldenDir = path.join(import.meta.dirname, 'golden', event)
+    const snapshotsDir = path.join(import.meta.dirname, 'snapshots', event)
 
     it.each(readJsonFiles(path.join(fixturesDir, 'valid')))('accepts %s', (_file, payload) => {
       expect(verdicts(payload)).toEqual({ jsonSchema: 'accepted', zod: 'accepted' })
@@ -62,7 +62,7 @@ for (const [event, { schemaFile, zodSchema }] of Object.entries(EVENTS)) {
     })
 
     // written by the firmware native tests (firmware/test), see docs/conventions/testing.md
-    it.each(readJsonFiles(goldenDir))('accepts firmware output %s', (_file, payload) => {
+    it.each(readJsonFiles(snapshotsDir))('accepts firmware output %s', (_file, payload) => {
       expect(verdicts(payload)).toEqual({ jsonSchema: 'accepted', zod: 'accepted' })
     })
   })

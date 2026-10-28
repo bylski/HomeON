@@ -19,19 +19,19 @@ export type VirtualDevice = Awaited<ReturnType<typeof createVirtualDevice>>
 type CommandHandler = (event: ComponentCommandEvent) => void
 
 /**
- * The discovery payload the real `test_sensors` firmware sends, read from the golden file its
- * native tests keep up to date (tests/contract/golden), with the device id swapped.
+ * The discovery payload the real `test_sensors` firmware sends, read from the snapshot its
+ * native tests keep up to date (tests/contract/snapshots), with the device id swapped.
  */
 export const firmwareDiscovery = (
   deviceId: string,
   name = 'Virtual device',
 ): DeviceDiscoveryEvent => {
-  const goldenPath = path.resolve(
+  const snapshotPath = path.resolve(
     import.meta.dirname,
-    '../../tests/contract/golden/discovery/testSensors.json',
+    '../../tests/contract/snapshots/discovery/testSensors.json',
   )
-  const golden = JSON.parse(fs.readFileSync(goldenPath, 'utf-8')) as DeviceDiscoveryEvent
-  return { ...golden, device_id: deviceId, name }
+  const snapshot = JSON.parse(fs.readFileSync(snapshotPath, 'utf-8')) as DeviceDiscoveryEvent
+  return { ...snapshot, device_id: deviceId, name }
 }
 
 /**
