@@ -1,0 +1,8 @@
+{
+  "timestamp": 1730000000,
+  "id": "ultrasonic_sensor",
+  "metric": "distance",
+  "value": 42.5,
+  "unit": "cm",
+  "state": "MEASURING"
+}

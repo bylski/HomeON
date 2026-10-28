@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Client.h>
-#include <Events.h>
+#include <MqttEvents.h>
 #include <PubSubClient.h>
 
 #include <string_view>
@@ -44,27 +44,15 @@ class MqttService {
     bool Publish(const TPayload& payload, const char* board_id,
                  const char* topic_suffix = "",
                  PublishOptions options = {.retain = false}) {
-        constexpr std::string_view topic_prefix =
-            TopicTraits<TPayload>::kPrefix;
-
-        // results in something like:
-        // "home-on/v1/commands/test_board/red_led/switch"
         // topic_suffix can be empty e.g. in discovery event
-        String full_topic =
-            String(topic_prefix.data()) + board_id + topic_suffix;
-
-        JsonDocument doc;
-        String json_payload;
-        doc.set(payload);
-        serializeJson(doc, json_payload);
+        std::string full_topic = BuildTopic<TPayload>(board_id, topic_suffix);
+        std::string json_payload = ToJson(payload);
 
         bool ok = client_.publish(full_topic.c_str(), json_payload.c_str(),
                                   options.retain);
-        if (ok) {
-            Serial.println("Publishing " + full_topic + " event");
-        } else {
-            Serial.println("Error while publishing " + full_topic + " event");
-        }
+        Serial.print(ok ? "Publishing " : "Error while publishing ");
+        Serial.print(full_topic.c_str());
+        Serial.println(" event");
         return ok;
     }
 

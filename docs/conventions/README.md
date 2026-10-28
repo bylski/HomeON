@@ -13,6 +13,7 @@ documents win and the code should be fixed.
 | [comments-and-logging.md](comments-and-logging.md) | comment style, `fixme` markers, logger usage                 |
 | [firmware.md](firmware.md)                         | C++ formatting, Google naming (`k`, `_`), firmware structure |
 | [frontend.md](frontend.md)                         | TBD                                                          |
+| [testing.md](testing.md)                           | test layers, tools, where test files go, how to write them   |
 | [tooling.md](tooling.md)                           | linters, formatters, hooks: which tool enforces which rule   |
 
 Keep each file focused on one topic. Add a new file (and a row here) when a topic grows beyond a

@@ -1,0 +1,53 @@
+# system test stack: compose.yml plus the infrastructure device-ingest needs, with test
+# credentials. Started by the system tests under its own project name, on host ports docker picks
+# freely (the tests look them up), so it never clashes with the dev stack or anything else.
+services:
+  device-ingest:
+    # migrations are applied here only; production deployments run `pnpm db:migrate` themselves
+    command:
+      - sh
+      - -c
+      - cd services/device-ingest && node_modules/.bin/drizzle-kit migrate && node dist/src/main.js
+    environment:
+      APP_PORT: 3000
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      ENV_MQTT_HOST: mosquitto
+      ENV_MQTT_PORT: 1883
+      ENV_MQTT_USERNAME: test
+      ENV_MQTT_PASSWORD: test
+    ports: !override
+      - '3000'
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mosquitto:
+        condition: service_started
+    healthcheck:
+      test:
+        - CMD
+        - node
+        - -e
+        - "fetch('http://localhost:3000/discovery/devices').then((r) => process.exit(r.ok ? 0 : 1), () => process.exit(1))"
+      interval: 2s
+      retries: 30
+
+  postgres:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: device-ingest
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres -d device-ingest']
+      interval: 1s
+      retries: 30
+
+  mosquitto:
+    image: eclipse-mosquitto:2
+    volumes:
+      - ./tests/system/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
+    ports:
+      - '1883'

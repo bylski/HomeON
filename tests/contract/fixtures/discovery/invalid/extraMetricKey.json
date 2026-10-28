@@ -1,0 +1,14 @@
+{
+  "device_id": "test_sensors",
+  "name": "Test device",
+  "components": [
+    {
+      "id": "x",
+      "name": "X",
+      "type": "SENSOR",
+      "metrics": [
+        { "metric_id": "m", "name": "M", "metric": "distance", "unit": "cm", "precision": 2 }
+      ]
+    }
+  ]
+}

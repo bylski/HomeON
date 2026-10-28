@@ -1,0 +1,20 @@
+{
+  "device_id": "test_sensors",
+  "name": "Test device",
+  "components": [
+    {
+      "id": "x",
+      "name": "X",
+      "type": "LIGHT",
+      "commands": [
+        {
+          "command_id": "c",
+          "name": "C",
+          "command": "SWITCH",
+          "command_topic": "/x/switch",
+          "qos": 1
+        }
+      ]
+    }
+  ]
+}

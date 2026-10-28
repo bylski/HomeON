@@ -11,7 +11,7 @@ Read the relevant files in [docs/conventions/](docs/conventions/README.md) befor
 The key rules:
 
 - **Contracts:** MQTT payloads are defined only in `config/schemas/*.json`. After any change run
-  `pnpm generate-configs`. Never edit `generated/events.ts` or `firmware/lib/Mqtt/Events.h` by hand.
+  `pnpm generate-configs`. Never edit `generated/events.ts` or `firmware/lib/Events/Events.h` by hand.
 - **Topics:** `home-on/v1/<event-type>/<device_id>[/<component_id>[/<command>]]`. Discovery is
   retained, telemetry uses QoS 0, commands use QoS 1 and must be idempotent.
 - **Backend layers:** `index` -> `handlers` -> `services` -> `repository` -> `db`, never
@@ -23,11 +23,21 @@ The key rules:
 - **C++:** Google style (`.clang-format`). PascalCase types and functions, snake_case variables,
   `member_` suffix for private members, `kConstant`, everything in `namespace HomeOn`.
 - **Comments** explain why, not what. Mark known issues with `// fixme:`.
+- **Comments and docs should survive renames.** State the rule or reason rather than naming
+  files, functions, scripts, ports or devices that live elsewhere, and don't repeat a value that
+  is defined in code. Use judgement: a pointer to a doc or a root config file is a fine anchor,
+  and a concrete name is right when it is what the reader actually needs.
 
 ## Commands
 
 - `pnpm lint`: run every check (ESLint, Prettier, clang-format, typecheck). It must pass before
   finishing a task.
+- `pnpm test`: run the fast tests. They must pass before finishing a task. When a change touches
+  the database or MQTT handling, `pnpm test:integration` (needs Docker) must pass too. See
+  [docs/conventions/testing.md](docs/conventions/testing.md).
+- `pnpm test:firmware`: firmware tests on the PC (run after firmware changes)
+- `pnpm test:system`: system tests against the shipped compose stack (needs Docker)
+- `pnpm virtual-device`: fake ESP device on MQTT for development without hardware
 - `pnpm format`: auto-fix formatting and fixable lint errors
 - `pnpm check:codegen`: verify generated files match the schemas
 - `pnpm generate-configs`: regenerate C++ and TS event types from the JSON schemas

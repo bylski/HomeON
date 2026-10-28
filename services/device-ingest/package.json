@@ -1,30 +1,33 @@
 {
   "name": "@home-on/device-ingest",
   "version": "1.0.0",
-  "main": "app.js",
+  "main": "dist/src/main.js",
   "type": "module",
   "private": true,
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx tsx watch src/app.ts",
-    "start": "node ./dist/src/app.js",
-    "build": "tsc",
-    "typecheck": "tsc --noEmit -p ."
+    "dev": "npx tsx watch src/main.ts",
+    "start": "node ./dist/src/main.js",
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc --noEmit -p .",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
   "devDependencies": {
+    "@testcontainers/postgresql": "^12.2.1",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
+    "drizzle-kit": "^1.0.0-rc.4",
+    "testcontainers": "^12.2.1",
     "tsx": "^4.23.12",
-    "typescript": "^7.0.2",
-    "drizzle-kit": "^1.0.0-rc.4"
+    "typescript": "^7.0.2"
   },
   "dependencies": {
-    "@home-on/generated": "workspace:*",
     "@home-on/drizzle": "workspace:*",
+    "@home-on/generated": "workspace:*",
     "@home-on/logger": "workspace:*",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",

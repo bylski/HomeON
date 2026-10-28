@@ -63,5 +63,7 @@ Rule of thumb: a `class` with private state uses `name_`; a `struct` with public
 - All library code goes in `namespace HomeOn`.
 - Libraries (`firmware/lib/`) never depend on a specific device. Each device's specifics (pins,
   IDs, discovery payload) stay in `firmware/devices/<device_id>/`.
+- `lib/Events/` is plain C++ with no Arduino includes, so it compiles on a PC for the tests
+  (see [testing.md](testing.md)). Arduino-specific code lives in the other libraries.
 - Secrets and environment values come from `firmware/.env` (via `scripts/get_env.py`) and are
   never hard-coded in `config.h`.

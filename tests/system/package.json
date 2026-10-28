@@ -1,0 +1,19 @@
+{
+  "name": "@home-on/system-tests",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Black-box tests against the shipped Docker Compose stack.",
+  "scripts": {
+    "typecheck": "tsc --noEmit -p ."
+  },
+  "dependencies": {
+    "@home-on/generated": "workspace:*",
+    "@home-on/logger": "workspace:*",
+    "@home-on/virtual-device": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "typescript": "^7.0.2"
+  }
+}

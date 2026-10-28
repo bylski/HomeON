@@ -1,0 +1,5 @@
+{
+  "timestamp": 1730000000,
+  "command": "SWITCH_LED",
+  "value": "ON"
+}

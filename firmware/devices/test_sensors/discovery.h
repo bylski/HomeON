@@ -31,7 +31,7 @@ const CommandMetadata kLedCommand = {
     .command_id = "switch_led",
     .name = "Switch LED on/off",
     .command = "SWITCH_LED",
-    .command_topic = String("/") + kRedLedId + "red_led/switch",
+    .command_topic = std::string("/") + kRedLedId + "/switch",
     .allowed_values = {"ON", "OFF"},
     .description = "Switches LED ON or OFF",
 };

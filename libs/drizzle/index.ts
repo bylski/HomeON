@@ -56,6 +56,7 @@ export const prepareUpdateOnConflictSet = <
 
 export * from 'drizzle-orm'
 export * from 'drizzle-orm/pg-core'
+export { migrate } from 'drizzle-orm/node-postgres/migrator'
 
 // resolve conflicts between 'drizzle-orm' and 'drizzle-orm/pg-core' exports
 export type { SelectedFields } from 'drizzle-orm/pg-core'

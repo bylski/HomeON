@@ -52,3 +52,5 @@ shared by all devices. Each physical device has its own folder in `devices/<devi
 - Where telemetry is stored (plain Postgres or a time-series extension) and which service owns it.
 - Controller scope, and whether it shares a database with device-ingest.
 - Whether the MQTT broker and Postgres get added to `compose.yml`.
+- Whether the Pi runs a 32- or 64-bit OS. It decides the image platform (`linux/arm/v7` or
+  `linux/arm64`) and the ARM build check still to be added to CI.

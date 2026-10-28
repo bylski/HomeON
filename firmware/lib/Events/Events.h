@@ -1,59 +1,59 @@
 #pragma once
 
-#include <Arduino.h>
-#include <ArduinoJson.h>
-
+#include <cstdint>
+#include <string>
+#include <string_view>
 #include <variant>
 #include <vector>
 
 struct ComponentCommandEvent {
     int64_t timestamp;
-    String command;
-    std::variant<int, double, bool, String> value;
+    std::string command;
+    std::variant<int, double, bool, std::string> value;
 };
 
 struct MetricMetadata {
-    String metric_id;
-    String name;
-    String metric;
-    String unit;
+    std::string metric_id;
+    std::string name;
+    std::string metric;
+    std::string unit;
     double min_value;
     double max_value;
 };
 
 struct CommandMetadata {
-    String command_id;
-    String name;
-    String command;
-    String command_topic;
-    std::vector<String> allowed_values;
+    std::string command_id;
+    std::string name;
+    std::string command;
+    std::string command_topic;
+    std::vector<std::string> allowed_values;
     double min_value;
     double max_value;
-    String description;
+    std::string description;
 };
 
 struct ComponentConfig {
-    String id;
-    String name;
-    String type;
+    std::string id;
+    std::string name;
+    std::string type;
     std::vector<MetricMetadata> metrics;
     std::vector<CommandMetadata> commands;
 };
 
 struct DeviceDiscoveryEvent {
-    String device_id;
-    String name;
-    String ip_address;
+    std::string device_id;
+    std::string name;
+    std::string ip_address;
     std::vector<ComponentConfig> components;
 };
 
 struct ComponentTelemetryEvent {
     int64_t timestamp;
-    String id;
-    String metric;
-    std::variant<int, double, bool, String> value;
-    String unit;
-    String state;
+    std::string id;
+    std::string metric;
+    std::variant<int, double, bool, std::string> value;
+    std::string unit;
+    std::string state;
 };
 
 template <typename T>

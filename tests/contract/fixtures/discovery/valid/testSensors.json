@@ -1,0 +1,46 @@
+{
+  "device_id": "test_sensors",
+  "name": "Test device",
+  "ip_address": "192.168.1.50",
+  "components": [
+    {
+      "id": "ultrasonic_sensor",
+      "name": "Distance sensor",
+      "type": "SENSOR",
+      "metrics": [
+        {
+          "metric_id": "ultrasonic_distance",
+          "name": "Distance",
+          "metric": "distance",
+          "unit": "cm",
+          "min_value": 0
+        }
+      ]
+    },
+    {
+      "id": "red_led_diode",
+      "name": "Red led diode",
+      "type": "LIGHT",
+      "metrics": [
+        {
+          "metric_id": "led_state",
+          "name": "LED state",
+          "metric": "output_state",
+          "unit": "",
+          "min_value": 0,
+          "max_value": 1
+        }
+      ],
+      "commands": [
+        {
+          "command_id": "switch_led",
+          "name": "Switch LED on/off",
+          "command": "SWITCH_LED",
+          "command_topic": "/red_led_diode/switch",
+          "allowed_values": ["ON", "OFF"],
+          "description": "Switches LED ON or OFF"
+        }
+      ]
+    }
+  ]
+}

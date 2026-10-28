@@ -1,6 +1,6 @@
 import { execFileSync, execSync } from 'node:child_process'
 
-const GENERATED_FILES = ['generated/events.ts', 'firmware/lib/Mqtt/Events.h']
+const GENERATED_FILES = ['generated/events.ts', 'firmware/lib/Events/Events.h']
 
 /**
  * Regenerates the event types and fails if the result differs from the working tree, which means

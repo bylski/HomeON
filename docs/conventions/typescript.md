@@ -34,4 +34,4 @@
 
 - Shared variables (MQTT broker, etc.) go in the root `.env.shared`. Service-specific variables go
   in `services/<name>/.env`. Each has a committed `.env.example` that must be kept up to date.
-- A service loads its envs in `src/envConfig.ts`, which must be the **first** import in `app.ts`.
+- A service loads its envs in `src/envConfig.ts`, which must be the **first** import in the entry file (`src/main.ts`).

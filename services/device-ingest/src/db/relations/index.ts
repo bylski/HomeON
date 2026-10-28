@@ -20,26 +20,26 @@ export const relations = defineRelations(
         to: r.devices.id,
       }),
       commandsMetadata: r.many.commandsMetadata({
-        from: r.components.componentId,
-        to: r.commandsMetadata.componentId,
+        from: [r.components.deviceId, r.components.componentId],
+        to: [r.commandsMetadata.deviceId, r.commandsMetadata.componentId],
       }),
       metricsMetadata: r.many.metricsMetadata({
-        from: r.components.componentId,
-        to: r.metricsMetadata.componentId,
+        from: [r.components.deviceId, r.components.componentId],
+        to: [r.metricsMetadata.deviceId, r.metricsMetadata.componentId],
       }),
     },
 
     commandsMetadata: {
       component: r.one.components({
-        from: r.commandsMetadata.componentId,
-        to: r.components.componentId,
+        from: [r.commandsMetadata.deviceId, r.commandsMetadata.componentId],
+        to: [r.components.deviceId, r.components.componentId],
       }),
     },
 
     metricsMetadata: {
       component: r.one.components({
-        from: r.metricsMetadata.componentId,
-        to: r.components.componentId,
+        from: [r.metricsMetadata.deviceId, r.metricsMetadata.componentId],
+        to: [r.components.deviceId, r.components.componentId],
       }),
     },
   }),
