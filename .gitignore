@@ -7,3 +7,7 @@ dist
 
 # platformio files
 .pio
+# feature specs: only spec.md is committed (see docs/specs/README.md)
+docs/specs/*/spec.html
+docs/specs/*/research.md
+docs/specs/*/.state.md
