@@ -1,69 +1,58 @@
 import fs from 'node:fs'
 import path from 'node:path'
 
-import { Marked, parseInline } from 'marked'
+import { buildPanels, type Panel } from './panels'
 
 const specsDir = path.resolve(__dirname, '../../docs/specs')
 const pageTemplate = fs.readFileSync(path.join(__dirname, 'page.html'), 'utf-8')
 
-// the decisions phase marks unanswered decisions as "### D-2 · Question — **open**"
-const OPEN_DECISION = /\*\*open\*\*\s*$/i
-const DECISION_ID = /^(D-\d+)\b/i
-
 const escapeHtml = (text: string) =>
   text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 
-const slugify = (text: string) =>
-  text
-    .toLowerCase()
-    .replace(/[^\p{L}\p{N}]+/gu, '-')
-    .replace(/^-|-$/g, '')
+const renderSidebar = (title: string, status: string, panels: Panel[]) => {
+  const openCount = panels.filter((panel) => panel.open).length
+  const statusWord = status
+    .split('·')[0]
+    .replace(/^Status:\s*/i, '')
+    .trim()
+  const chip = [statusWord, openCount ? `${openCount} open` : ''].filter(Boolean).join(' · ')
+  let group = ''
+  const links = panels
+    .map((panel) => {
+      const heading =
+        panel.group !== group ? `<div class="group">${(group = panel.group)}</div>` : ''
+      const dot =
+        panel.group === 'Decisions' ? `<span class="dot${panel.open ? ' open' : ''}"></span>` : ''
+      const meta = panel.meta ? `<span class="meta">${panel.meta}</span>` : ''
+      return `${heading}<a href="#${panel.id}" data-id="${panel.id}">${dot}${escapeHtml(panel.label)}${meta}</a>`
+    })
+    .join('')
+  return `<div class="spec-title">${escapeHtml(title)}</div>${
+    chip ? `<span class="chip${openCount ? ' open' : ''}">${escapeHtml(chip)}</span>` : ''
+  }<nav>${links}</nav>`
+}
 
-type OpenDecision = { id: string; label: string }
+const renderPanels = (panels: Panel[]) =>
+  panels
+    .map((panel, index) => {
+      const previous = panels[index - 1]
+      const next = panels[index + 1]
+      const pager = `<div class="pager">${
+        previous ? `<a href="#${previous.id}">← ${escapeHtml(previous.label)}</a>` : '<span></span>'
+      }${next ? `<a href="#${next.id}">${escapeHtml(next.label)} →</a>` : ''}</div>`
+      return `<section class="panel" id="p-${panel.id}">${panel.html}${pager}</section>`
+    })
+    .join('\n')
 
 const renderSpec = (specPath: string) => {
   const markdown = fs.readFileSync(specPath, 'utf-8')
-  const usedIds = new Set<string>()
-  const openDecisions: OpenDecision[] = []
-
-  // stable ids, so chat questions can link straight to a decision (spec.html#d-2)
-  const uniqueId = (base: string) => {
-    let id = base || 'section'
-    for (let n = 2; usedIds.has(id); n++) {
-      id = `${base}-${n}`
-    }
-    usedIds.add(id)
-    return id
-  }
-
-  const marked = new Marked({
-    renderer: {
-      heading: ({ text, depth }) => {
-        const decisionId = depth === 3 ? DECISION_ID.exec(text)?.[1] : undefined
-        const id = uniqueId(slugify(decisionId ?? text))
-        const isOpen = decisionId !== undefined && OPEN_DECISION.test(text)
-        if (isOpen) {
-          openDecisions.push({ id, label: decisionId })
-        }
-        const className = decisionId ? ` class="decision${isOpen ? ' open' : ''}"` : ''
-        return `<h${depth} id="${id}"${className}>${parseInline(text)}</h${depth}>\n`
-      },
-    },
-  })
-
-  const body = marked.parse(markdown, { async: false })
-  const title = /^# (.+)$/m.exec(markdown)?.[1] ?? path.basename(path.dirname(specPath))
-  const banner = openDecisions.length
-    ? `<p class="banner">Open decisions: ${openDecisions
-        .map(({ id, label }) => `<a href="#${id}">${label}</a>`)
-        .join(', ')}</p>`
-    : ''
+  const { title, status, panels } = buildPanels(markdown, path.basename(path.dirname(specPath)))
 
   // replacer functions, because a plain replacement string treats `$&` and similar specially
   const html = pageTemplate
     .replace('{{title}}', () => escapeHtml(title))
-    .replace('{{banner}}', () => banner)
-    .replace('{{body}}', () => body)
+    .replace('{{sidebar}}', () => renderSidebar(title, status, panels))
+    .replace('{{panels}}', () => renderPanels(panels))
 
   const outputPath = path.join(path.dirname(specPath), 'spec.html')
   fs.writeFileSync(outputPath, html)
