@@ -107,7 +107,13 @@
       "Bash(gh run view *)",
       "PowerShell(gh run view *)",
       "Bash(gh run list *)",
-      "PowerShell(gh run list *)"
+      "PowerShell(gh run list *)",
+      "Bash(orca tab create *)",
+      "PowerShell(orca tab create *)",
+      "Bash(orca goto *)",
+      "PowerShell(orca goto *)",
+      "Bash(orca reload)",
+      "PowerShell(orca reload)"
     ],
     "ask": [
       "Bash(git push *)",
