@@ -26,7 +26,7 @@ option you suggest.
   it, not only that it can happen.
 - Follow the evidence rules in `.claude/skills/feature/reference/evidence-rules.md`. In short:
   every claim gets a URL and a one-line quote copied verbatim from the page you fetched, GitHub
-  links are pinned to a commit or tag, numbers come with how they were measured, and anything
+  links are pinned to a full commit SHA, numbers come with how they were measured, and anything
   without a source is marked as an assumption. Never quote a page you did not fetch.
 
 ## Report format
@@ -49,7 +49,7 @@ option you suggest.
 - <what you could not confirm>
 
 ## Sources
-[n]: <url> "<verbatim one-line quote>"
+[n]: <url> '<source title>: “<verbatim one-line quote>”'
 ```
 
 Leave out sections that do not apply. Present options with their trade-offs; the decisions phase
