@@ -24,7 +24,7 @@ Out: what it deliberately leaves out, with the spec or issue that picks it up if
 
 Evidence: claims with a source each, as reference links ([1]) or measured numbers with the method.
 
-Recommendation: the option and the one reason that decides it.
+Recommendation: A, because of the one reason that decides it. Start with the option's letter.
 
 ### D-2 · Question in a few words — **Option name** · decided by Name
 
