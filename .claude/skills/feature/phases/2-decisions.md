@@ -29,15 +29,18 @@ the critic once more. Findings still left after that go to the user along with t
 
 ## 3. The user reads the spec
 
-Run `pnpm spec:render docs/specs/NNN-slug/spec.md` and ask the user to read the whole
-`spec.html`, giving its full path. Wait for them. Their comments may change the draft; apply them
+Run `pnpm spec:render docs/specs/NNN-slug/spec.md` and open the page for the user. When the
+`orca` CLI is available, open it in an Orca browser tab with
+`orca tab create --url file:///<absolute path to spec.html>`. Otherwise give its full path. Ask
+the user to read the whole spec and wait for them. Their comments may change the draft; apply them
 and re-render before asking about decisions.
 
 ## 4. Questions
 
 Ask about the open decisions **one at a time** with AskUserQuestion, in the order of the spec:
 
-- The question names the decision and links `docs/specs/NNN-slug/spec.html#d-N`.
+- The question names the decision and links `docs/specs/NNN-slug/spec.html#d-N`. In Orca, also
+  scroll the open tab to it with `orca goto --url file:///<absolute path to spec.html>#d-N`.
 - The options are the spec's options with the recommended one first and marked `(Recommended)`.
   Each description holds the deciding trade-off and evidence in a line or two.
 - Explain every term the user may not know with a short example, as in "retained: the broker
@@ -50,7 +53,8 @@ After each answer:
    recommendation" when they gave none.
 2. Update anything else in the spec that the answer changes, such as criteria, defaults or other
    decisions, and say what changed.
-3. Re-render the HTML and update the state file.
+3. Re-render the HTML, run `orca reload` when the page is open in Orca, and update the state
+   file.
 
 When the user answers with something that is not one of the options, research it as far as the
 evidence rules need, add it as an option and confirm it with them. When they turn a default into
