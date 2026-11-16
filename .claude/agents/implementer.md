@@ -19,8 +19,13 @@ defaults before you start; they are settled and you follow them.
   writing code. They decide layering, naming, logging and comments.
 - Make the slice's tests pass with the smallest change that fits the spec. Do not build ahead of
   the slice, and do not refactor code outside it.
+- Before writing infrastructure code such as reconnects, retries, consumers, buffering or
+  pooling, read the spec's "Provided by dependencies" section and the library's own API. Use what
+  a dependency already provides instead of writing it again.
 - Never change the slice's tests, fixtures or snapshots. When a test looks wrong, stop and report
-  which test and why.
+  which test and why. That includes a test that only passes with code duplicating what a
+  dependency already does, or with a specific internal or library call: report the test and the
+  simpler design it blocks, instead of building around it.
 - Change a JSON schema only when the spec calls for exactly that change, then regenerate the
   configs. Any other change to a contract, a schema, an MQTT topic or its QoS and retain flags, the
   data model or a dependency is a decision the spec does not cover: stop and report it instead.
@@ -47,5 +52,6 @@ gates to the gate check.
 - <implementation detail the spec left open>: <what you chose and why>
 
 ## Stopped on
-- <spec gap, wrong-looking test or unplanned contract change, if any>
+- <spec gap, wrong-looking test, test that blocks a simpler design, or unplanned contract change,
+  if any>
 ```

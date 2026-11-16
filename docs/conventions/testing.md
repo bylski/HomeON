@@ -52,6 +52,10 @@ them, so it starts with the frontend.
 
 - Test behaviour through a module's exported functions, not its internals. A non-exported helper
   is tested through the function that uses it.
+- Never assert which functions the code calls on a third-party library. A fake of a library
+  imitates only its documented public API and behaves like it (an AMQP wrapper re-runs its setup
+  on reconnect, for example). When a fake can't match the real behaviour, test it against the
+  real service instead.
 - A unit test mocks only the layer **directly below** the one under test (a service test mocks the
   repository, a handler test mocks the service). Mock it with a factory, so the real module and
   its imports (db, MQTT client) are never loaded.
@@ -72,6 +76,9 @@ them, so it starts with the frontend.
   results over REST.
 - Retained messages outlive a test on the broker, so clean up every retained message a test
   publishes.
+- Behaviour on a broker or database restart (reconnect, resubscribe, redelivery, retry) gets at
+  least one integration test against the real service. Give that container a fixed free host
+  port, so `restart()` keeps the address the service connects to.
 - Test files run one at a time because they share the database and broker.
 
 ## Contract tests

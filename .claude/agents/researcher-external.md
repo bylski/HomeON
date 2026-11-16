@@ -22,6 +22,11 @@ option you suggest.
   point, and say that it is secondary.
 - Check that a source is current: note the version or date it applies to, and whether a library is
   still maintained (latest release and its date).
+- For a library, list which of the feature's behaviours it already provides and through which
+  API (for example "consumers are re-established after a reconnect: `ChannelWrapper.consume`").
+  Read its type declarations, documentation or source for the version you would pin, and note
+  where it behaves differently from what the feature needs, such as a per-consumer instead of a
+  per-channel limit.
 - For a failure mode question, describe how it fails, what triggers it and how a test could provoke
   it, not only that it can happen.
 - Follow the evidence rules in `.claude/skills/feature/reference/evidence-rules.md`. In short:
@@ -41,6 +46,7 @@ option you suggest.
 - For: <claim> ([n])
 - Against: <claim> ([n])
 - Fit for HomeOn: <how it fits the hardware and performance limits and the existing stack>
+- Provides: <feature behaviour> → <API> ([n]); <behaviour it does differently or not at all>
 
 ## Failure modes
 - <what fails, the trigger, how to test it> ([n])

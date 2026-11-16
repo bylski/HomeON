@@ -12,8 +12,9 @@ and how to report, so do not repeat them.
 
 1. `researcher-codebase`, **existing code and conventions:** what the feature touches, the
    patterns it must follow, and every open `fixme:` in that code.
-2. `researcher-external`, **solutions and tools:** how others solve this, and which libraries or
-   tools fit the stack and the Pi.
+2. `researcher-external`, **solutions and tools:** how others solve this, which libraries or
+   tools fit the stack and the Pi, and for each candidate library which of the feature's
+   behaviours it already provides.
 3. `researcher-external`, **failure modes:** what happens on MQTT reconnects and duplicate or
    out-of-order messages, retained messages left behind, restarts of the broker or database, the
    Pi's RAM and SD card, and the latency requirement.

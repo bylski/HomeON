@@ -22,8 +22,21 @@ report instead of choosing an interpretation.
 - Write only test files, their setup and contract fixtures. Never change production code, schemas
   or generated files. When a test needs a type, function or schema that does not exist yet, import
   it as the spec describes and leave the missing piece to the implementer.
-- Test observable behaviour through exported functions, MQTT and REST, never internals, so the
-  implementer is free to choose how to build it.
+- Test observable behaviour through exported functions, MQTT, AMQP queues and REST, never
+  internals, so the implementer is free to choose how to build it. Assert outcomes (what reaches
+  the device, which queue holds what, what the database stores), not which functions the code
+  calls on the way.
+- Never dictate how the code uses a third-party library. A test that only passes when the code
+  calls a specific library function, such as consuming on the raw channel instead of the
+  library's wrapper, forces the implementer to build around the library. When the spec's
+  "Provided by dependencies" section names a library API for a behaviour, the tests must allow it.
+- Fake a third-party library only through the public API its documentation shows, and make the
+  fake behave like the library, for example re-running setup on reconnect. When a fake cannot
+  match the real behaviour, test that behaviour against the real service in an integration test
+  instead.
+- Behaviour on a broker or database restart (reconnect, resubscribe, redelivery, retry) gets at
+  least one integration test against the real service, restarting its container as
+  `docs/conventions/testing.md` describes, unless the spec records why it cannot.
 - Every retained MQTT message a test publishes must be cleared before the test ends, including
   when the test fails.
 - When the slice changes a schema, add one valid and one invalid contract fixture for the change.
@@ -53,4 +66,6 @@ check silently.
 
 ## Notes
 - <existing tests changed and why, snapshots that must change, spec ambiguities>
+- <entry points the tests call: exported functions, routes, topics, queues. Name only these,
+  never internal or library calls the implementation is expected to make>
 ```

@@ -32,6 +32,15 @@ Options table and evidence as above, kept after the decision.
 
 Why: the reason given when deciding.
 
+## Provided by dependencies
+
+What the libraries and tools chosen in Decisions already do, so nobody writes it again. Only when a
+decision picks a library or tool.
+
+| Behaviour the spec needs            | Provided by                       | Differs from what we need |
+| ----------------------------------- | --------------------------------- | ------------------------- |
+| restart consumers after a reconnect | `lib@1.2` `Wrapper.consume` ([2]) | per-consumer prefetch     |
+
 ## Defaults chosen by the agent
 
 - Choice: one-line reason.

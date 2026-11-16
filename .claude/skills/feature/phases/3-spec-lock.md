@@ -3,12 +3,21 @@
 Freeze what will be built. After this the implementation follows the spec, and changing a user's
 decision means asking again.
 
-## 1. Final critic pass
+## 1. Dependency inventory
+
+When a decision picked a library or tool, possibly one the user brought in while deciding, give
+`researcher-external` one brief per library: the spec path, the library and the version it will be
+pinned to, and the question "which of the spec's behaviours does it already provide, through which
+API, and where does it behave differently from what the spec needs". Write the answers into the
+spec's "Provided by dependencies" section with their sources, and adjust the defaults so they use
+those APIs instead of describing hand-written ones.
+
+## 2. Final critic pass
 
 Give `spec-critic` the spec path as a final pass, then fix its findings as in the decisions
 phase. Run `pnpm spec:check-sources` on the spec once more.
 
-## 2. Slices
+## 3. Slices
 
 Split the work into vertical slices, usually 3 to 6. A vertical slice cuts through every layer it
 needs (schema, handler, service, repository, test) and leaves the feature working a bit further,
@@ -20,7 +29,7 @@ instead of building one layer at a time. Every slice:
 
 Write the slices into the state file. They are a plan for building, not part of the spec.
 
-## 3. Approval
+## 4. Approval
 
 Show the user a short summary of the decisions, the criteria and the slice plan, and ask for
 approval. On approval:
