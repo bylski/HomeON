@@ -6,16 +6,23 @@ Have the branch reviewed by an agent that did not write it, and fix what it find
 
 1. Give `reviewer` only the spec path and the base SHA from the state file. A fresh reviewer that
    has not seen the research or the slices judges the result the way a reader of the PR will.
-2. Sort its findings:
+2. Before fixing anything, compare the findings with the earlier rounds in the state file. When a
+   finding lands in a function an earlier round already fixed, do not patch it again. Give
+   `simplifier` the spec path, that function and its fix history, and ask whether the function
+   should exist at all. Treat its answer as a Design finding.
+3. Sort its findings:
    - **Blocking and Small:** fix them, through `implementer` for code and `test-writer` for tests,
      or directly when a fix is a line or two.
+   - **Design:** replace the code with the simpler design when it keeps the spec's behaviour,
+     through `implementer`, and `test-writer` for tests that assert the old internals. A Design
+     finding that would change behaviour is asked like a Spec finding.
    - **Spec or contract:** ask the user, one finding at a time, like a decision. When the answer
      changes the spec, update it and say why in the commit.
    - **Wrong:** a finding that misreads the code or the spec is not fixed. Write down why in the
      state file, so the PR can mention it.
-3. Run the gates from the implementation phase on what changed, then commit the fixes:
+4. Run the gates from the implementation phase on what changed, then commit the fixes:
    `address review round N`.
-4. Record the round and its findings in the state file.
+5. Record the round and its findings in the state file.
 
 ## Ending
 

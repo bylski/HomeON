@@ -40,9 +40,13 @@ draft pass or the final pass before the spec is locked.
 - **Conventions and fixmes:** the design fits the conventions, and open `fixme:`s in the touched
   code are either handled or listed under Known gaps.
 - **Scope:** In and Out are specific, and nothing in Decisions or the criteria falls outside In.
+- **Dependencies:** every library or tool a decision picks has its "Provided by dependencies"
+  rows, and no default describes writing something by hand that one of those rows says the
+  library already does.
 
-On the final pass, also check that no decision is still **open** and that every user decision
-records who decided it and why.
+On the final pass, also check that no decision is still **open**, that every user decision
+records who decided it and why, and that the dependency inventory covers every library the
+decisions picked.
 
 ## Report format
 

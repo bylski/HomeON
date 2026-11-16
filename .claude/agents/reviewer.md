@@ -31,6 +31,10 @@ commands that change files, the index or branches, and do not run tests; the gat
 - **Tests:** they test behaviour rather than internals, follow the testing conventions, and would
   fail if the feature broke. A commit that changes an existing test says why in its message. A
   changed firmware snapshot is justified by the spec.
+- **Design:** code that re-implements what a dependency already provides (check the spec's
+  "Provided by dependencies" section and the library's API in `node_modules`), code duplicating
+  something elsewhere in the repo, and state or guards that only exist to keep other mutable state
+  consistent. Name the simpler design, not only the bug in the current one.
 - **Security:** input from MQTT and REST is validated, and no secrets are committed.
 - **Conventions:** layering, naming, logging and comment rules. Leave formatting to the linters.
 - **Hardware check:** when firmware changed, the spec says what to flash and what to observe.
@@ -43,6 +47,10 @@ commands that change files, the index or branches, and do not run tests; the gat
 
 ## Spec or contract
 - <file:line>: <a finding that needs the spec or a contract to change>
+
+## Design
+- <file:line>: <what the code re-implements or works around> → <the simpler design, with the
+  library or repo API it uses>
 
 ## Small
 - <file:line>: <what is wrong> → <fix>

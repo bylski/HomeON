@@ -1,7 +1,8 @@
 # Phase 4 · Implementation
 
 Build the slices one by one, test first. One agent writes the tests and another the code, so the
-tests describe the spec and are not written to fit the code.
+tests describe the spec and are not written to fit the code. A third agent then checks how much of
+the working code needs to exist.
 
 ## Per slice
 
@@ -9,11 +10,18 @@ tests describe the spec and are not written to fit the code.
 
 Give `test-writer` the spec path, the slice's criteria and its scope. Check its report: every
 criterion of the slice has a test at the layer the spec names, and every test fails because the
-behaviour is missing. Send it back when not.
+behaviour is missing. Send it back when not, and also when a test asserts which library or
+internal functions the code calls instead of an outcome.
 
 ### 2. Code
 
-Give `implementer` the spec path, the slice's scope and the test files from step 1.
+Give `implementer` the spec path, the slice's scope and the test files from step 1. Pass on only
+the entry points the tests call, never the test writer's guesses about how to build the code,
+such as which library calls to make.
+
+When the implementer reports a test that blocks a simpler design, judge it against the spec. If
+the simpler design keeps the spec's behaviour, send the test back to `test-writer` to assert the
+outcome instead, then continue.
 
 ### 3. Gates
 
@@ -30,7 +38,20 @@ On failure, send the failing output to `implementer`, or to `test-writer` when t
 wrong, and run the gates again. After three failed rounds, stop and show the user what fails. An
 `ENV` result is not a pass: ask the user to start Docker, or whatever is missing, and rerun.
 
-### 4. Commit
+### 4. Simplify
+
+Once the gates are green, give `simplifier` the spec path and the slice's changes (the working
+tree against `HEAD`). It looks for code that a dependency or the repository already provides, and
+state that only exists to patch other state.
+
+- Send each Replace, Delete and Simplify finding that keeps the spec's behaviour to `implementer`,
+  and each "Tests in the way" finding to `test-writer`. A finding that would change behaviour the
+  spec describes follows the stop rules instead.
+- Run the gates again after the changes. Skip this step only when the simplifier reports no
+  findings.
+- List what was simplified in the commit body.
+
+### 5. Commit
 
 1. Fill in the Test column of the spec for the slice's criteria.
 2. Stage the slice's files by name and commit them in one commit, in the repo's style: a short
